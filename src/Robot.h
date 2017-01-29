@@ -17,15 +17,10 @@ int signum(int val) {
 
 class Swerve: public SampleRobot {
 	Joystick * joystick;
-	CANTalon * fls;
-	CANTalon * bls;
-	CANTalon * frs;
-	CANTalon * brs;
-
-	Talon * fld;
-	Talon * bld;
-	Talon * frd;
-	Talon * brd;
+	SwerveModule * fl;
+	SwerveModule * fr;
+	SwerveModule * bl;
+	SwerveModule * br;
 public:
 	Swerve();
 	void RobotInit();
