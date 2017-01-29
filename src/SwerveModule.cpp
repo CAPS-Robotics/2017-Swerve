@@ -63,5 +63,4 @@ void SwerveModule::ResetPosition() {
 
 void SwerveModule::Brake() {
 	this->drive->Set(0);
-	this->steer->Set(this->steer->Get());
 }
