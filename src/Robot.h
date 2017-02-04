@@ -7,6 +7,7 @@
 
 #include "WPILib.h"
 #include <CANTalon.h>
+#include <PigeonImu.h>
 #include <thread>
 
 #ifndef SRC_ROBOT_H_
@@ -24,12 +25,12 @@ class Swerve: public SampleRobot {
 	SwerveModule * fr;
 	SwerveModule * bl;
 	SwerveModule * br;
-	AnalogGyro * gyro;
 	PWM * redLeds;
 	PWM * greenLeds;
 	PWM * blueLeds;
 	CANTalon * climber;
 	CANTalon * climber2;
+	PigeonImu * pigeon;
 public:
 	Swerve();
 	void RobotInit();

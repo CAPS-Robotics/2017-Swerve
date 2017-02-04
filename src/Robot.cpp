@@ -1,6 +1,7 @@
 #include "WPILib.h"
 #include "config.h"
 #include <CANTalon.h>
+#include <PigeonImu.h>
 #include <cmath>
 #include "Robot.h"
 #include "SwerveModule.h"
@@ -49,20 +50,19 @@ Swerve::Swerve() {
 	this->fr = new SwerveModule(FR_CAN, FR_PWM, false);
 	this->bl = new SwerveModule(BL_CAN, BL_PWM, true);
 	this->br = new SwerveModule(BR_CAN, BR_PWM, false);
-	this->gyro = new AnalogGyro(ANALOG_GYRO);
 	this->redLeds = new PWM(12);
 	this->greenLeds = new PWM(11);
 	this->blueLeds = new PWM(10);
 	this->climber = new CANTalon(CLIMB_CAN);
 	this->climber2 = new CANTalon(CLIMB2_CAN);
+	this->pigeon = new PigeonImu(climber);
 }
 
 // Inits gyro since we aren't using it
 void Swerve::RobotInit() {
 	//std::thread vision(Swerve::VisionThread);
 	//vision.detach();
-	gyro->InitGyro();
-	gyro->Calibrate();
+	pigeon->SetFusedHeading(0);
 }
 
 // This auto currently drives forward at 50% power
@@ -106,6 +106,9 @@ void Swerve::OperatorControl() {
 	// Angle variables
 	float fla = 0, fra = 0, bla = 0, bra = 0;
 	double back, front, right, left;
+	double gyroangle = 0;
+	double heading = 0;
+	double turnvar = 0;
 	while (IsOperatorControl() && IsEnabled()) {
 		// LEDs don't work so who cares, I'm not deleting it
 		this->SetRGB(0, 0, 192);
@@ -118,7 +121,17 @@ void Swerve::OperatorControl() {
 		SmartDashboard::PutNumber("X-Value", strafe);
 		SmartDashboard::PutNumber("Y-Value", forward);
 		SmartDashboard::PutNumber("Twist", rotation);
-
+		SmartDashboard::PutNumber("Gyro", gyroangle);
+		SmartDashboard::PutNumber("Heading", heading);
+		gyroangle = fmod(pigeon->GetFusedHeading(), 360.0);
+		if(gyroangle < 0) {
+			gyroangle = 360+gyroangle;
+		}
+		heading += rotation;
+		heading = fmod(heading, 360.0);
+		if(heading < 0) {
+			heading = 360+heading;
+		}
 		// Speed multiplier for the memes
 		double speedMultiplier = (this->joystick->GetRawAxis(3) + 1) / 2;
 		//double heading = -gyro->GetAngle();
@@ -148,8 +161,8 @@ void Swerve::OperatorControl() {
 		}
 
 		// If button 9 pressed, reset gyro
-		if (this->joystick->GetRawButton(9)) {
-			this->gyro->Reset();
+		if (this->joystick->GetRawButton(6)) {
+			pigeon->SetCompassAngle(0);
 		}
 
 		// If button 1 pressed, apply the brake
@@ -183,13 +196,20 @@ void Swerve::OperatorControl() {
 			this->climber2->Set(0);
 		}
 
+		turnvar = heading-gyroangle;
+		if(turnvar > 100) {
+			turnvar = 100;
+		}
+		if(turnvar < -100) {
+			turnvar = -100;
+		}
 		// Finally, the swerve code
-		if (fabs(forward) != 0 || fabs(strafe) != 0 || fabs(rotation) != 0) {
-			if (fabs(rotation) != 0) {
-				back  = strafe  - rotation * 0.5;
-				front = strafe  + rotation * 0.5;
-				right = forward - rotation * 0.5;
-				left  = forward + rotation * 0.5;
+		if (fabs(forward) != 0 || fabs(strafe) != 0 || fabs((turnvar)) != 0) {
+			if (fabs((turnvar)) > 5) {
+				back  = strafe  - (turnvar) * 0.01;
+				front = strafe  + (turnvar) * 0.01;
+				right = forward - (turnvar) * 0.01;
+				left  = forward + (turnvar) * 0.01;
 			} else {
 				back  = strafe;
 				front = strafe;
@@ -213,7 +233,7 @@ void Swerve::OperatorControl() {
 				fla = 0;
 			} else {
 				fla = atan2(front, left) * 180 / PI;
-				fla = fmod((-fla + 360), 360);
+				fla = fmod((-fla + 360 + this->pigeon->GetFusedHeading()), 360);
 			}
 
 			if (front == 0 && right == 0) {
