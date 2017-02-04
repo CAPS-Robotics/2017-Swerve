@@ -64,7 +64,15 @@ void Swerve::RobotInit() {
 }
 
 void Swerve::Autonomous() {
-
+	fl->Run(0, 0.5);
+	fr->Run(0, 0.5);
+	bl->Run(0, 0.5);
+	br->Run(0, 0.5);
+	Wait(2);
+	fl->Brake();
+	fr->Brake();
+	bl->Brake();
+	br->Brake();
 }
 
 void Swerve::VisionThread() {
@@ -93,12 +101,14 @@ void Swerve::VisionThread() {
 void Swerve::OperatorControl() {
 	float fla = 0, fra = 0, bla = 0, bra = 0;
 	double back, front, right, left;
-
 	while (IsOperatorControl() && IsEnabled()) {
 		this->SetRGB(0, 0, 192);
-		double strafe = this->Deadband(this->joystick->GetRawAxis(0), 0.08);
-		double forward = this->Deadband(-this->joystick->GetRawAxis(1), 0.08);
+		double strafe = this->Deadband(this->joystick->GetRawAxis(0), 0.15);
+		double forward = this->Deadband(-this->joystick->GetRawAxis(1), 0.15);
 		double rotation = this->Deadband(this->joystick->GetRawAxis(2), 0.70);
+		SmartDashboard::PutNumber("X-Value", strafe);
+		SmartDashboard::PutNumber("Y-Value", forward);
+		SmartDashboard::PutNumber("Twist", rotation);
 		double speedMultiplier = (this->joystick->GetRawAxis(3) + 1) / 2;
 		//double heading = -gyro->GetAngle();
 		//double forward = ly * cos(heading * PI / 180) + lx * sin(heading * PI / 180);
@@ -138,7 +148,7 @@ void Swerve::OperatorControl() {
 			bl->ResetPosition();
 			br->ResetPosition();
 		}
-		/*
+
 		if (this->joystick->GetRawButton(3)) {
 			this->climber->Set(0.5);
 			this->climber2->Set(0.5);
@@ -147,7 +157,7 @@ void Swerve::OperatorControl() {
 			this->climber->Set(0);
 			this->climber2->Set(0);
 		}
-		*/
+
 		if (fabs(forward) != 0 || fabs(strafe) != 0 || fabs(rotation) != 0) {
 			if (fabs(rotation) != 0) {
 				back  = strafe  - rotation * 0.5;
@@ -205,10 +215,6 @@ void Swerve::OperatorControl() {
 			this->fr->Run(fra, frds * speedMultiplier);
 			this->bl->Run(bla, blds * speedMultiplier);
 			this->br->Run(bra, brds * speedMultiplier);
-			SmartDashboard::PutNumber("fld", flds * speedMultiplier);
-			SmartDashboard::PutNumber("frd", frds * speedMultiplier);
-			SmartDashboard::PutNumber("bld", blds * speedMultiplier);
-			SmartDashboard::PutNumber("brd", brds * speedMultiplier);
 		} else {
 			this->fl->Brake();
 			this->fr->Brake();

@@ -8,12 +8,12 @@
 #ifndef SRC_CONFIG_H_
 #define SRC_CONFIG_H_
 
-#define BL_CAN		0
+#define FR_CAN		0
 #define FL_CAN		1
 #define CLIMB2_CAN	2
-#define BR_CAN		3
-#define FR_CAN		4
-#define CLIMB_CAN	5
+#define BL_CAN		3
+#define CLIMB_CAN	4
+#define BR_CAN		5
 
 #define FR_PWM	0
 #define FL_PWM	1
