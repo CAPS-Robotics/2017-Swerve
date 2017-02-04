@@ -14,10 +14,12 @@ public:
 	SwerveModule(int steerMotor, int driveMotor, bool inverted);
 	~SwerveModule();
 	void Run(float angle, float speed);
-	float BestAngle(); 
-	void InitTalon(CANTalon *);
+	void SetBestAngle();
+	void InitCANTalon(CANTalon *);
 	void ResetPosition();
+	void Zero();
 	void Brake();
+	float GetEnc();
 };
 
 #endif

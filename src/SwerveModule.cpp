@@ -1,6 +1,7 @@
 #include "WPILib.h"
 #include "CANTalon.h"
 #include "config.h"
+#include "SwerveModule.h"
 
 SwerveModule::SwerveModule(int steerMotor, int driveMotor, bool inverted) {
 	this->steer = new CANTalon(steerMotor);
@@ -28,12 +29,13 @@ void SwerveModule::Run(float angle, float speed) {
 	this->angle = angle;
 	this->speed = fabs(speed) > 0.1 ? speed : 0;
 
-	float newAngle = this->steer->Get() - this->BestAngle();
-	this->steer->Set(newAngle / 360.f * GR);
+	//float newAngle = this->steer->Get() - this->BestAngle();
+	this->SetBestAngle();
+	this->steer->Set(this->angle / 360 * GR);
 	this->drive->Set(this->speed);
 }
 
-float SwerveModule::BestAngle() {
+void SwerveModule::SetBestAngle() {
 	float currentAngle = this->steer->Get() / GR * 360;
 	while (currentAngle > 360.f) {
 		currentAngle -= 360;
@@ -46,15 +48,16 @@ float SwerveModule::BestAngle() {
 		angle = fmod(180 + angle, 360);
 		speed = -speed;
 	}
+	SmartDashboard::PutNumber("Magic", angle);
 	// This calculates going cw to the target
-	float dist1 = currentAngle - angle;
+	/*float dist1 = currentAngle - angle;
 	// This calculates going ccw to the target
 	float dist2 = currentAngle - (360 + angle);
 	if (fabs(dist1) < fabs(dist2)) {
 		return dist1;
 	} else {
 		return dist2;
-	}
+	}*/
 }
 
 void SwerveModule::ResetPosition() {
@@ -63,4 +66,12 @@ void SwerveModule::ResetPosition() {
 
 void SwerveModule::Brake() {
 	this->drive->Set(0);
+}
+
+void SwerveModule::Zero() {
+	this->steer->Set(0);
+}
+
+float SwerveModule::GetEnc() {
+	return this->steer->Get() / GR;
 }

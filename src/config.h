@@ -8,10 +8,12 @@
 #ifndef SRC_CONFIG_H_
 #define SRC_CONFIG_H_
 
-#define BL_CAN	0
-#define FL_CAN	1
-#define FR_CAN	2
-#define BR_CAN	3
+#define BL_CAN		0
+#define FL_CAN		1
+#define CLIMB2_CAN	2
+#define BR_CAN		3
+#define FR_CAN		4
+#define CLIMB_CAN	5
 
 #define FR_PWM	0
 #define FL_PWM	1
@@ -33,6 +35,8 @@
 #define JOY_SPC_STR					10 // Start button
 #define JOY_SPC_LST					11 // Push the left stick in
 #define JOY_SPC_RST					12 // Push the right stick in
+
+#define ANALOG_GYRO					0
 
 #define PI		3.1415926536
 #define GR		1/1.2

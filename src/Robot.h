@@ -7,9 +7,12 @@
 
 #include "WPILib.h"
 #include <CANTalon.h>
+#include <thread>
 
 #ifndef SRC_ROBOT_H_
 #define SRC_ROBOT_H_
+
+#include "SwerveModule.h"
 
 int signum(int val) {
 	return val == 0 ? 0 : val / fabs(val);
@@ -21,6 +24,12 @@ class Swerve: public SampleRobot {
 	SwerveModule * fr;
 	SwerveModule * bl;
 	SwerveModule * br;
+	AnalogGyro * gyro;
+	PWM * redLeds;
+	PWM * greenLeds;
+	PWM * blueLeds;
+	CANTalon * climber;
+	CANTalon * climber2;
 public:
 	Swerve();
 	void RobotInit();
@@ -29,7 +38,9 @@ public:
 	void Disabled() {};
 	void Test() {};
 	void InitTalon(CANTalon * );
-	float Deadband(float);
+	float Deadband(float, float);
+	void SetRGB(int r, int g, int b);
+	static void VisionThread();
 };
 
 
