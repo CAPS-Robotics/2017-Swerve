@@ -196,20 +196,14 @@ void Swerve::OperatorControl() {
 			this->climber2->Set(0);
 		}
 
-		turnvar = heading-gyroangle;
-		if(turnvar > 100) {
-			turnvar = 100;
-		}
-		if(turnvar < -100) {
-			turnvar = -100;
-		}
+		turnvar = gyroangle-heading;
 		// Finally, the swerve code
 		if (fabs(forward) != 0 || fabs(strafe) != 0 || fabs((turnvar)) != 0) {
 			if (fabs((turnvar)) > 5) {
-				back  = strafe  - (turnvar) * 0.01;
-				front = strafe  + (turnvar) * 0.01;
-				right = forward - (turnvar) * 0.01;
-				left  = forward + (turnvar) * 0.01;
+				back  = strafe  - (turnvar) * 0.002777777;
+				front = strafe  + (turnvar) * 0.002777777;
+				right = forward - (turnvar) * 0.002777777;
+				left  = forward + (turnvar) * 0.002777777;
 			} else {
 				back  = strafe;
 				front = strafe;
