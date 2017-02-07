@@ -60,8 +60,8 @@ Swerve::Swerve() {
 
 // Inits gyro since we aren't using it
 void Swerve::RobotInit() {
-	//std::thread vision(Swerve::VisionThread);
-	//vision.detach();
+	std::thread vision(Swerve::VisionThread);
+	vision.detach();
 	pigeon->SetFusedHeading(0);
 }
 
@@ -106,38 +106,26 @@ void Swerve::OperatorControl() {
 	// Angle variables
 	float fla = 0, fra = 0, bla = 0, bra = 0;
 	double back, front, right, left;
-	double gyroangle = 0;
 	double heading = 0;
-	double turnvar = 0;
 	while (IsOperatorControl() && IsEnabled()) {
 		// LEDs don't work so who cares, I'm not deleting it
 		this->SetRGB(0, 0, 192);
 
 		// Reading joystick input after applying a deadband
-		double strafe = this->Deadband(this->joystick->GetRawAxis(0), 0.15);
-		double forward = this->Deadband(-this->joystick->GetRawAxis(1), 0.15);
+		double lx = this->Deadband(this->joystick->GetRawAxis(0), 0.15);
+		double ly = this->Deadband(-this->joystick->GetRawAxis(1), 0.15);
 		double rotation = this->Deadband(this->joystick->GetRawAxis(2), 0.70);
 		// Printing out joystick values
+		SmartDashboard::PutNumber("Twist", rotation);
+		SmartDashboard::PutNumber("Heading", heading);
+		heading = fmod(pigeon->GetFusedHeading(), 360.0);
+		// Speed multiplier for the memes
+		double speedMultiplier = (1 - this->joystick->GetRawAxis(3)) / 2;
+		double forward = ly * cos(heading * PI / 180) - lx * sin(heading * PI / 180);
+		double strafe = ly * sin(heading * PI / 180) + lx * cos(heading * PI / 180);
+
 		SmartDashboard::PutNumber("X-Value", strafe);
 		SmartDashboard::PutNumber("Y-Value", forward);
-		SmartDashboard::PutNumber("Twist", rotation);
-		SmartDashboard::PutNumber("Gyro", gyroangle);
-		SmartDashboard::PutNumber("Heading", heading);
-		gyroangle = fmod(pigeon->GetFusedHeading(), 360.0);
-		if(gyroangle < 0) {
-			gyroangle = 360+gyroangle;
-		}
-		heading += rotation;
-		heading = fmod(heading, 360.0);
-		if(heading < 0) {
-			heading = 360+heading;
-		}
-		// Speed multiplier for the memes
-		double speedMultiplier = (this->joystick->GetRawAxis(3) + 1) / 2;
-		//double heading = -gyro->GetAngle();
-		//double forward = ly * cos(heading * PI / 180) + lx * sin(heading * PI / 180);
-		//double strafe  = lx * cos(heading * PI / 180) - ly * sin(heading * PI / 180);
-
 		// Reading out encoder values
 		SmartDashboard::PutNumber("Angle fl", fl->GetEnc() * 180 / 120 * 360);
 		SmartDashboard::PutNumber("Angle fr", fr->GetEnc() * 180 / 120 * 360);
@@ -162,7 +150,7 @@ void Swerve::OperatorControl() {
 
 		// If button 9 pressed, reset gyro
 		if (this->joystick->GetRawButton(6)) {
-			pigeon->SetCompassAngle(0);
+			pigeon->SetFusedHeading(0);
 		}
 
 		// If button 1 pressed, apply the brake
@@ -196,14 +184,13 @@ void Swerve::OperatorControl() {
 			this->climber2->Set(0);
 		}
 
-		turnvar = gyroangle-heading;
 		// Finally, the swerve code
-		if (fabs(forward) != 0 || fabs(strafe) != 0 || fabs((turnvar)) != 0) {
-			if (fabs((turnvar)) > 5) {
-				back  = strafe  - (turnvar) * 0.002777777;
-				front = strafe  + (turnvar) * 0.002777777;
-				right = forward - (turnvar) * 0.002777777;
-				left  = forward + (turnvar) * 0.002777777;
+		if (fabs(forward) != 0 || fabs(strafe) != 0 || fabs(rotation) != 0) {
+			if (fabs(rotation) != 0) {
+				back  = strafe  - rotation;
+				front = strafe  + rotation;
+				right = forward - rotation;
+				left  = forward + rotation;
 			} else {
 				back  = strafe;
 				front = strafe;
@@ -227,7 +214,7 @@ void Swerve::OperatorControl() {
 				fla = 0;
 			} else {
 				fla = atan2(front, left) * 180 / PI;
-				fla = fmod((-fla + 360 + this->pigeon->GetFusedHeading()), 360);
+				fla = fmod((-fla + 360), 360);
 			}
 
 			if (front == 0 && right == 0) {
