@@ -187,10 +187,10 @@ void Swerve::OperatorControl() {
 		// Finally, the swerve code
 		if (fabs(forward) != 0 || fabs(strafe) != 0 || fabs(rotation) != 0) {
 			if (fabs(rotation) != 0) {
-				back  = strafe  - rotation;
-				front = strafe  + rotation;
-				right = forward - rotation;
-				left  = forward + rotation;
+				back  = strafe  - rotation * 0.5;
+				front = strafe  + rotation * 0.5;
+				right = forward - rotation * 0.5;
+				left  = forward + rotation * 0.5;
 			} else {
 				back  = strafe;
 				front = strafe;
