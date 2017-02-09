@@ -56,12 +56,13 @@ Swerve::Swerve() {
 	this->climber = new CANTalon(CLIMB_CAN);
 	this->climber2 = new CANTalon(CLIMB2_CAN);
 	this->pigeon = new PigeonImu(climber);
+	this->rangeFinder = new AnalogInput(0);
 }
 
 // Inits gyro since we aren't using it
 void Swerve::RobotInit() {
-	std::thread vision(Swerve::VisionThread);
-	vision.detach();
+	//std::thread vision(Swerve::VisionThread);
+	//vision.detach();
 	pigeon->SetFusedHeading(0);
 }
 
@@ -71,11 +72,7 @@ void Swerve::Autonomous() {
 	fr->Run(0, 0.5);
 	bl->Run(0, 0.5);
 	br->Run(0, 0.5);
-	Wait(2);
-	fl->Brake();
-	fr->Brake();
-	bl->Brake();
-	br->Brake();
+
 }
 
 // Doesn't run yet. Don't worry about it
@@ -91,14 +88,8 @@ void Swerve::VisionThread() {
 	while (true) {
 		vid.GrabFrame(src);
 		cv::cvtColor(src, hsv, cv::COLOR_BGR2HSV);
-		cv::inRange(hsv, cv::Scalar(70, 200, 100), cv::Scalar(80, 255, 255), final);
+		cv::inRange(hsv, cv::Scalar(60, 150, 100), cv::Scalar(90, 255, 255), final);
 		output.PutFrame(final);
-		/*cv::findContours(output, contours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
-			if (cv::contourArea(contours[i], false) > 200) {
-				contours.erase(contours.begin() + i);
-				rectangle(src, cv::boundingRect(contours[i]), cv::Scalar(0, 0, 0));
-			}
-		}*/
 	}
 }
 
@@ -122,7 +113,10 @@ void Swerve::OperatorControl() {
 		// Speed multiplier for the memes
 		double speedMultiplier = (1 - this->joystick->GetRawAxis(3)) / 2;
 		double forward = ly * cos(heading * PI / 180) - lx * sin(heading * PI / 180);
-		double strafe = ly * sin(heading * PI / 180) + lx * cos(heading * PI / 180);
+		double strafe =  ly * sin(heading * PI / 180) + lx * cos(heading * PI / 180);
+
+		SmartDashboard::PutNumber("Ultrasonic Voltage", this->rangeFinder->GetVoltage());
+		SmartDashboard::PutNumber("Ultrasonic Distance", this->rangeFinder->GetVoltage() / 0.012446);
 
 		SmartDashboard::PutNumber("X-Value", strafe);
 		SmartDashboard::PutNumber("Y-Value", forward);
@@ -153,14 +147,6 @@ void Swerve::OperatorControl() {
 			pigeon->SetFusedHeading(0);
 		}
 
-		// If button 1 pressed, apply the brake
-		if (this->joystick->GetRawButton(1)) {
-			fl->Brake();
-			fr->Brake();
-			bl->Brake();
-			br->Brake();
-		}
-
 		// Press buttons 7 and 8 to zero the encoders
 		if (this->joystick->GetRawButton(7) && this->joystick->GetRawButton(8)) {
 			fl->ResetPosition();
@@ -184,8 +170,15 @@ void Swerve::OperatorControl() {
 			this->climber2->Set(0);
 		}
 
+		// If button 1 pressed, apply the brake
+		if (this->joystick->GetRawButton(1)) {
+			fl->Run(0, forward + rotation * 0.5);
+			fr->Run(0, forward - rotation * 0.5);
+			bl->Run(0, forward + rotation * 0.5);
+			br->Run(0, forward - rotation * 0.5);
+		}
 		// Finally, the swerve code
-		if (fabs(forward) != 0 || fabs(strafe) != 0 || fabs(rotation) != 0) {
+		else if (fabs(forward) != 0 || fabs(strafe) != 0 || fabs(rotation) != 0) {
 			if (fabs(rotation) != 0) {
 				back  = strafe  - rotation * 0.5;
 				front = strafe  + rotation * 0.5;

@@ -31,6 +31,7 @@ class Swerve: public SampleRobot {
 	CANTalon * climber;
 	CANTalon * climber2;
 	PigeonImu * pigeon;
+	AnalogInput * rangeFinder;
 public:
 	Swerve();
 	void RobotInit();
