@@ -6,7 +6,6 @@
 class OI
 {
 private:
-	Joystick * joy1;
 	JoystickButton * button1;
 	JoystickButton * button2;
 	JoystickButton * button3;
@@ -21,6 +20,7 @@ private:
 	JoystickButton * button12;
 public:
 	OI();
+	Joystick * joy1;
 	float GetX();
 	float GetY();
 	float GetTwist();

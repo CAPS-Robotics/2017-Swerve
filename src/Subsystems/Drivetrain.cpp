@@ -2,19 +2,20 @@
 #include "../Robot.h"
 #include "../RobotMap.h"
 #include "SwerveModule.h"
+#include <Commands/Drivetrain/DriveWithJoysticks.h>
 
 Drivetrain::Drivetrain() : Subsystem("Drivetrain") {
 	Robot::gyro.get();
-	this->fl = new SwerveModule(FL_TALON_SRX, FL_DRIVE_TALON, true);
-	this->fr = new SwerveModule(FR_TALON_SRX, FR_DRIVE_TALON, false);
-	this->bl = new SwerveModule(BL_TALON_SRX, BL_DRIVE_TALON, true);
-	this->br = new SwerveModule(BR_TALON_SRX, BR_DRIVE_TALON, false);
+	this->fl = new SwerveModule(FL_TALON_SRX, FL_DRIVE_TALON, FL_STEER_ENCODER, true);
+	this->fr = new SwerveModule(FR_TALON_SRX, FR_DRIVE_TALON, FR_STEER_ENCODER, false);
+	this->bl = new SwerveModule(BL_TALON_SRX, BL_DRIVE_TALON, BL_STEER_ENCODER, true);
+	this->br = new SwerveModule(BR_TALON_SRX, BR_DRIVE_TALON, BR_STEER_ENCODER, false);
 	this->rangeFinder = new AnalogInput(RANGE_FINDER);
 	this->currentMode = Drivetrain::ControlMode::fieldOrientedSwerve;
 }
 
 void Drivetrain::InitDefaultCommand() {
-
+	//SetDefaultCommand(new DriveWithJoysticks());
 }
 
 void Drivetrain::SetControlMode(Drivetrain::ControlMode cm) {
@@ -25,7 +26,29 @@ double Drivetrain::GetDistanceAway() {
 	return this->rangeFinder->GetVoltage() / 0.012446;
 }
 
+void Drivetrain::ReturnWheelsToZero() {
+	this->fl->ReturnToZero();
+	this->fr->ReturnToZero();
+	this->bl->ReturnToZero();
+	this->br->ReturnToZero();
+}
+
 void Drivetrain::Drive(double x, double y, double rotation, double speedMultiplier) {
+	SmartDashboard::PutNumber("FL Voltage", fl->positionEncoder->GetAverageVoltage());
+	SmartDashboard::PutNumber("FR Voltage", fr->positionEncoder->GetAverageVoltage());
+	SmartDashboard::PutNumber("BL Voltage", bl->positionEncoder->GetAverageVoltage());
+	SmartDashboard::PutNumber("BR Voltage", br->positionEncoder->GetAverageVoltage());
+
+	SmartDashboard::PutNumber("FL Angle", fl->GetAngle());
+	SmartDashboard::PutNumber("FR Angle", fr->GetAngle());
+	SmartDashboard::PutNumber("BL Angle", bl->GetAngle());
+	SmartDashboard::PutNumber("BR Angle", br->GetAngle());
+
+	SmartDashboard::PutNumber("FL Setpoint", fl->pid->GetSetpoint());
+	SmartDashboard::PutNumber("FR Setpoint", fr->pid->GetSetpoint());
+	SmartDashboard::PutNumber("BL Setpoint", bl->pid->GetSetpoint());
+	SmartDashboard::PutNumber("BR Setpoint", br->pid->GetSetpoint());
+
 	switch (this->currentMode) {
 	case Drivetrain::ControlMode::fieldOrientedSwerve:
 	case Drivetrain::ControlMode::swerve:
@@ -91,10 +114,16 @@ void Drivetrain::CrabDrive(double x, double y, double rotation, double speedMult
 		brds /= maxSpeed;
 	}
 
-	double fla = fmod(-(atan2(front, left)  * 180 / PI) + 360, 360);
-	double fra = fmod(-(atan2(front, right) * 180 / PI) + 360, 360);
-	double bla = fmod(-(atan2(back,  left)  * 180 / PI) + 360, 360);
-	double bra = fmod(-(atan2(back,  front) * 180 / PI) + 360, 360);
+	double fla = 0, fra = 0, bla = 0, bra = 0;
+
+	if (front != 0 || left != 0)
+		fla = fmod(-(atan2(front, left)  * 180 / PI) + 360, 360);
+	if (front != 0 || right != 0)
+		fra = fmod(-(atan2(front, right) * 180 / PI) + 360, 360);
+	if (back != 0 || left != 0)
+		bla = fmod(-(atan2(back,  left)  * 180 / PI) + 360, 360);
+	if (back != 0 || right != 0)
+		bra = fmod(-(atan2(back,  right) * 180 / PI) + 360, 360);
 
 	this->fl->Drive(flds * speedMultiplier, fla);
 	this->fr->Drive(frds * speedMultiplier, fra);

@@ -14,16 +14,17 @@ public:
 		arcade
 	};
 private:
+	ControlMode currentMode;
+	AnalogInput * rangeFinder;
+public:
 	SwerveModule * fl;
 	SwerveModule * fr;
 	SwerveModule * bl;
 	SwerveModule * br;
-	ControlMode currentMode;
-	AnalogInput * rangeFinder;
-public:
 	Drivetrain();
 	void InitDefaultCommand();
 	double GetDistanceAway();
+	void ReturnWheelsToZero();
 	void SetControlMode(Drivetrain::ControlMode cm);
 	void Drive(double x, double y, double rotation, double speedMultiplier);
 	void CrabDrive(double x, double y, double rotation, double speedMultiplier);

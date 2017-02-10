@@ -2,6 +2,10 @@
 
 #include <WPILib.h>
 #include "Commands/Drivetrain/SetArcadeMode.h"
+#include "Commands/Drivetrain/ReturnWheels.h"
+#include "Commands/Drivetrain/ZeroGyro.h"
+#include "Commands/Climber/Climb.h"
+#include "Commands/Climber/StopClimbing.h"
 
 OI::OI() {
 	joy1 = new Joystick(0);
@@ -19,6 +23,10 @@ OI::OI() {
 	button12 = new JoystickButton(joy1, 12);
 
 	button1->WhileHeld(new SetArcadeMode());
+	button2->WhenPressed(new ReturnWheels());
+	button3->WhileHeld(new Climb());
+	button4->WhileHeld(new StopClimbing());
+	button6->WhenPressed(new ZeroGyro());
 }
 
 float OI::GetX() {
