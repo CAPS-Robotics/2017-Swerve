@@ -122,13 +122,13 @@ void Drivetrain::CrabDrive(double x, double y, double rotation, double speedMult
 			double diff = Robot::gyro->GetHeading() - desiredHeading;
 			SmartDashboard::PutNumber("Difference", diff);
 			if (front != 0 || left != 0)
-				fla = fmod(-(atan2(front, left)  * 180 / PI) + 360 - 0.5 * (diff), 360);
+				fla = fmod(-(atan2(front, left)  * 180 / PI) + 360 - diff, 360);
 			if (front != 0 || right != 0)
-				fra = fmod(-(atan2(front, right) * 180 / PI) + 360 - 0.5 * (diff), 360);
+				fra = fmod(-(atan2(front, right) * 180 / PI) + 360 - diff, 360);
 			if (back != 0 || left != 0)
-				bla = fmod(-(atan2(back,  left)  * 180 / PI) + 360 - 0.5 * (diff), 360);
+				bla = fmod(-(atan2(back,  left)  * 180 / PI) + 360 - diff, 360);
 			if (back != 0 || right != 0)
-				bra = fmod(-(atan2(back,  right) * 180 / PI) + 360 - 0.5 * (diff), 360);
+				bra = fmod(-(atan2(back,  right) * 180 / PI) + 360 - diff, 360);
 		}
 
 		SmartDashboard::PutNumber("Desired Heading", desiredHeading);

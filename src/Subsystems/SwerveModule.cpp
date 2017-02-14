@@ -14,7 +14,6 @@ SwerveModule::SwerveModule(int steerMotor, int driveMotor, bool isInverted) : Su
 	steer->SetPID(2.5f, 0.0002f, 0.0005f);
 	steer->ConfigNeutralMode(CANTalon::NeutralMode::kNeutralMode_Brake);
 	steer->SetAllowableClosedLoopErr(1);
-	steer->ConfigPeakOutputVoltage(12.f, -12.f);
 	steer->Enable();
 	currentSpeed = 0;
 	steer->Set(0);

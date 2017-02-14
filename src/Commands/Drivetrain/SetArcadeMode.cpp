@@ -21,7 +21,7 @@ void SetArcadeMode::Execute() {
 
 // Make this return true when this  no longer needs to run execute()
 bool SetArcadeMode::IsFinished() {
-	return true;
+	return false;
 }
 
 // Called once after isFinished returns true

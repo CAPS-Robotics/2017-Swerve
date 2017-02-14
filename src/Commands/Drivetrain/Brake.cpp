@@ -6,7 +6,6 @@
 Brake::Brake() {
 	// Use Requires() here to declare subsystem dependencies
 	Requires(Robot::drivetrain.get());
-	Robot::oi.get();
 }
 
 // Called just before this  runs the first time
