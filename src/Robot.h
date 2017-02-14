@@ -5,6 +5,7 @@
 #include "OI.h"
 
 class Robot: public frc::IterativeRobot {
+	Command * autonomousCommand;
 public:
 	Robot();
 	void RobotInit() override;

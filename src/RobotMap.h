@@ -31,5 +31,6 @@ const int BR_STEER_ENCODER		= 1;
 const int RANGE_FINDER			= 4;
 
 const int PI = 3.1415926536;
+const int GR = 1.0 / 1.2;
 
 #endif  // ROBOTMAP_H

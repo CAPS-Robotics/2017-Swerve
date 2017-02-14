@@ -16,6 +16,7 @@ public:
 private:
 	ControlMode currentMode;
 	AnalogInput * rangeFinder;
+	double desiredHeading;
 public:
 	SwerveModule * fl;
 	SwerveModule * fr;

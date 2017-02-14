@@ -9,7 +9,7 @@ Climber::Climber() : Subsystem("Climber") {
 
 void Climber::SetClimberSpeed(double speed) {
 	this->climber1->Set(speed);
-	this->climber2->Set(-speed);
+	this->climber2->Set(speed);
 }
 
 void Climber::StopClimber() {

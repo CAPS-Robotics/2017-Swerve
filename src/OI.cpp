@@ -23,7 +23,7 @@ OI::OI() {
 	button12 = new JoystickButton(joy1, 12);
 
 	button1->WhileHeld(new SetArcadeMode());
-	button2->WhenPressed(new ReturnWheels());
+	button2->WhileHeld(new ReturnWheels());
 	button3->WhileHeld(new Climb());
 	button4->WhileHeld(new StopClimbing());
 	button6->WhenPressed(new ZeroGyro());
