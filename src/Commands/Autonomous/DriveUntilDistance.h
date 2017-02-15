@@ -5,6 +5,7 @@
 
 class DriveUntilDistance : public Command {
 float distance;
+double speed;
 public:
 	DriveUntilDistance(float distance);
 	void Initialize();

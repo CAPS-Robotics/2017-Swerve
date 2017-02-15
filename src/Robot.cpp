@@ -4,6 +4,7 @@
 #include "Robot.h"
 #include "WPILib.h"
 #include "Commands/Autonomous/TestAuton.h"
+#include <thread>
 
 std::shared_ptr<Drivetrain> Robot::drivetrain;
 std::shared_ptr<Climber> Robot::climber;
@@ -20,11 +21,14 @@ void Robot::RobotInit() {
 	Robot::gyro.reset(new PigeonNav());
 	Robot::oi.reset(new OI());
 	this->autonomousCommand = new TestAuton();
+	std::thread vt(Robot::VisionThread);
+	vt.detach();
 }
 
 void Robot::DisabledInit() {
 
 }
+
 
 void Robot::DisabledPeriodic() {
 	frc::Scheduler::GetInstance()->Run();
@@ -37,7 +41,17 @@ void Robot::AutonomousInit() {
 }
 
 void Robot::AutonomousPeriodic() {
+	SmartDashboard::PutNumber("Distance Away", Robot::drivetrain->GetDistanceAway());
 	frc::Scheduler::GetInstance()->Run();
+}
+
+
+void Robot::VisionThread() {
+	cs::UsbCamera cam = CameraServer::GetInstance()->StartAutomaticCapture();
+	cam.SetResolution(320, 240);
+	cam.SetBrightness(10);
+	cs::CvSink vid = CameraServer::GetInstance()->GetVideo();
+	cs::CvSource output = CameraServer::GetInstance()->PutVideo("Contours", 320, 240);
 }
 
 void Robot::TeleopInit() {

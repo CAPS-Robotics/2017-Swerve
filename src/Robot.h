@@ -20,6 +20,7 @@ public:
 	static std::shared_ptr<Climber> climber;
 	static std::shared_ptr<PigeonNav> gyro;
 	static std::shared_ptr<OI> oi;
+	static void VisionThread();
 private:
 
 };
