@@ -80,10 +80,10 @@ void Drivetrain::CrabDrive(double x, double y, double rotation, double speedMult
 		double back, front, right, left;
 
 		if (rotation != 0) {
-			back  = strafe  - rotation * 1;
-			front = strafe  + rotation * 1;
-			right = forward - rotation * 1;
-			left  = forward + rotation * 1;
+			back  = strafe  - rotation * 1.0 / sqrt(2);
+			front = strafe  + rotation * 1.0 / sqrt(2);
+			right = forward - rotation * 1.0 / sqrt(2);
+			left  = forward + rotation * 1.0 / sqrt(2);
 		} else {
 			back  = strafe;
 			front = strafe;
@@ -107,7 +107,6 @@ void Drivetrain::CrabDrive(double x, double y, double rotation, double speedMult
 		double fla = 0, fra = 0, bla = 0, bra = 0;
 
 
-
 		if (rotation != 0) {
 			desiredHeading = Robot::gyro->GetHeading();
 			if (front != 0 || left != 0)
@@ -119,16 +118,16 @@ void Drivetrain::CrabDrive(double x, double y, double rotation, double speedMult
 			if (back != 0 || right != 0)
 				bra = fmod(-(atan2(back,  right) * 180 / PI) + 360, 360);
 		} else {
-			double diff = Robot::gyro->GetHeading() - desiredHeading;
-			SmartDashboard::PutNumber("Difference", diff);
+			double correction = 0.125 * (Robot::gyro->GetHeading() - desiredHeading) - 0.005 * Robot::gyro->GetAngularRate();
+			SmartDashboard::PutNumber("Difference", correction);
 			if (front != 0 || left != 0)
-				fla = fmod(-(atan2(front, left)  * 180 / PI) + 360 - diff, 360);
+				fla = fmod(-(atan2(front, left)  * 180 / PI) + 360 + correction, 360);
 			if (front != 0 || right != 0)
-				fra = fmod(-(atan2(front, right) * 180 / PI) + 360 - diff, 360);
+				fra = fmod(-(atan2(front, right) * 180 / PI) + 360 + correction, 360);
 			if (back != 0 || left != 0)
-				bla = fmod(-(atan2(back,  left)  * 180 / PI) + 360 - diff, 360);
+				bla = fmod(-(atan2(back,  left)  * 180 / PI) + 360 + correction, 360);
 			if (back != 0 || right != 0)
-				bra = fmod(-(atan2(back,  right) * 180 / PI) + 360 - diff, 360);
+				bra = fmod(-(atan2(back,  right) * 180 / PI) + 360 + correction, 360);
 		}
 
 		SmartDashboard::PutNumber("Desired Heading", desiredHeading);

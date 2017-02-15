@@ -8,9 +8,11 @@
 class PigeonNav : public Subsystem {
 private:
 	PigeonImu * gyro;
+	double * ypr;
 public:
 	PigeonNav();
 	double GetHeading();
+	double GetAngularRate();
 	void ResetHeading();
 	void InitDefaultCommand();
 };

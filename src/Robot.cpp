@@ -46,6 +46,7 @@ void Robot::TeleopInit() {
 void Robot::TeleopPeriodic() {
 	SmartDashboard::PutNumber("Distance Away", Robot::drivetrain->GetDistanceAway());
 	SmartDashboard::PutNumber("Heading", Robot::gyro->GetHeading());
+	SmartDashboard::PutNumber("Angular Rate", Robot::gyro->GetAngularRate());
 
 	frc::Scheduler::GetInstance()->Run();
 }
