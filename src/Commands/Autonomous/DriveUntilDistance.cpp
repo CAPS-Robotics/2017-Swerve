@@ -15,6 +15,9 @@ void DriveUntilDistance::Initialize() {
 
 // Called repeatedly when this  is scheduled to run
 void DriveUntilDistance::Execute() {
+	if (Robot::drivetrain->GetDistanceAway() < distance) {
+		End();
+	}
 	/*if (fabs(Robot::drivetrain->GetDistanceAway() - distance) < 6) {
 		speed -= 0.05;
 	} else {
@@ -25,12 +28,12 @@ void DriveUntilDistance::Execute() {
 	} else if (speed >= 0.75) {
 		speed -= 0.05;
 	}*/
-	Robot::drivetrain->CrabDrive(0.05, 0.25, 0, 1);
+	Robot::drivetrain->ArcadeDrive(0.35, 0, 1);
 }
 
 // Make this return true when this  no longer needs to run execute()
 bool DriveUntilDistance::IsFinished() {
-	return fabs(Robot::drivetrain->GetDistanceAway() - distance) < 1;
+	return Robot::drivetrain->GetDistanceAway() < distance;
 }
 
 // Called once after isFinished returns true

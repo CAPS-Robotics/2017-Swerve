@@ -7,10 +7,10 @@ PigeonNav::PigeonNav() : Subsystem("PigeonNav") {
 	Robot::climber.get();
 	this->gyro = new PigeonImu(Robot::climber->GetClimber1());
 	this->ypr = new double[3];
+	this->ResetHeading();
 }
 
 double PigeonNav::GetHeading() {
-	this->gyro->GetYawPitchRoll(this->ypr);
 	return this->gyro->GetFusedHeading();
 }
 

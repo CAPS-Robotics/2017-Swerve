@@ -41,10 +41,13 @@ void Robot::AutonomousInit() {
 }
 
 void Robot::AutonomousPeriodic() {
+	SmartDashboard::PutNumber("FL Angle", Robot::drivetrain->fl->GetAngle());
+	SmartDashboard::PutNumber("FR Angle", Robot::drivetrain->fr->GetAngle());
+	SmartDashboard::PutNumber("BL Angle", Robot::drivetrain->bl->GetAngle());
+	SmartDashboard::PutNumber("BR Angle", Robot::drivetrain->br->GetAngle());
 	SmartDashboard::PutNumber("Distance Away", Robot::drivetrain->GetDistanceAway());
 	frc::Scheduler::GetInstance()->Run();
 }
-
 
 void Robot::VisionThread() {
 	cs::UsbCamera cam = CameraServer::GetInstance()->StartAutomaticCapture();
@@ -52,12 +55,18 @@ void Robot::VisionThread() {
 	cam.SetBrightness(10);
 	cs::CvSink vid = CameraServer::GetInstance()->GetVideo();
 	cs::CvSource output = CameraServer::GetInstance()->PutVideo("Contours", 320, 240);
+	cs::MjpegServer * ms1 = new cs::MjpegServer("Camera 0", 1181);
+	ms1->SetSource(cam);
 }
 
 void Robot::TeleopInit() {
 }
 
 void Robot::TeleopPeriodic() {
+	SmartDashboard::PutNumber("FL Angle", Robot::drivetrain->fl->GetAngle());
+	SmartDashboard::PutNumber("FR Angle", Robot::drivetrain->fr->GetAngle());
+	SmartDashboard::PutNumber("BL Angle", Robot::drivetrain->bl->GetAngle());
+	SmartDashboard::PutNumber("BR Angle", Robot::drivetrain->br->GetAngle());
 	SmartDashboard::PutNumber("Distance Away", Robot::drivetrain->GetDistanceAway());
 	SmartDashboard::PutNumber("Heading", Robot::gyro->GetHeading());
 	SmartDashboard::PutNumber("Angular Rate", Robot::gyro->GetAngularRate());

@@ -7,14 +7,7 @@
 #include "Commands/Subsystem.h"
 
 class Drivetrain : public Subsystem {
-public:
-	enum class ControlMode {
-		fieldOrientedSwerve,
-		swerve,
-		arcade
-	};
 private:
-	ControlMode currentMode;
 	AnalogInput * rangeFinder;
 	double desiredHeading;
 public:
@@ -26,9 +19,8 @@ public:
 	void InitDefaultCommand();
 	double GetDistanceAway();
 	void ReturnWheelsToZero();
-	void SetControlMode(Drivetrain::ControlMode cm);
-	void Drive(double x, double y, double rotation, double speedMultiplier);
-	void CrabDrive(double x, double y, double rotation, double speedMultiplier);
+	void Drive(double angle, double speed, double speedMultiplier);
+	void CrabDrive(double x, double y, double rotation, double speedMultiplier, bool useGyro);
 	void ArcadeDrive(double forward, double rotation, double speedMultiplier = 1);
 	void Brake();
 };

@@ -11,16 +11,11 @@ Drivetrain::Drivetrain() : Subsystem("Drivetrain") {
 	this->bl = new SwerveModule(BL_TALON_SRX, BL_DRIVE_TALON, true);
 	this->br = new SwerveModule(BR_TALON_SRX, BR_DRIVE_TALON, false);
 	this->rangeFinder = new AnalogInput(RANGE_FINDER);
-	this->currentMode = Drivetrain::ControlMode::fieldOrientedSwerve;
 	this->desiredHeading = 0;
 }
 
 void Drivetrain::InitDefaultCommand() {
 	SetDefaultCommand(new DriveWithJoysticks());
-}
-
-void Drivetrain::SetControlMode(Drivetrain::ControlMode cm) {
-	this->currentMode = cm;
 }
 
 double Drivetrain::GetDistanceAway() {
@@ -34,23 +29,6 @@ void Drivetrain::ReturnWheelsToZero() {
 	this->br->ReturnToZero();
 }
 
-void Drivetrain::Drive(double x, double y, double rotation, double speedMultiplier) {
-	SmartDashboard::PutNumber("FL Angle", fl->GetAngle());
-	SmartDashboard::PutNumber("FR Angle", fr->GetAngle());
-	SmartDashboard::PutNumber("BL Angle", bl->GetAngle());
-	SmartDashboard::PutNumber("BR Angle", br->GetAngle());
-
-	switch (this->currentMode) {
-	case Drivetrain::ControlMode::fieldOrientedSwerve:
-	case Drivetrain::ControlMode::swerve:
-		this->CrabDrive(x, y, rotation, speedMultiplier);
-		break;
-	case Drivetrain::ControlMode::arcade:
-		this->ArcadeDrive(y, rotation, speedMultiplier);
-		break;
-	};
-}
-
 void Drivetrain::Brake() {
 	this->fl->Drive(0, 0);
 	this->fr->Drive(0, 0);
@@ -58,25 +36,33 @@ void Drivetrain::Brake() {
 	this->br->Drive(0, 0);
 }
 
-void Drivetrain::ArcadeDrive(double forward, double rotation, double speedMultiplier) {
-	this->fl->Drive((forward + rotation * 1) * speedMultiplier, 0);
-	this->fr->Drive((forward - rotation * 1) * speedMultiplier, 0);
-	this->bl->Drive((forward + rotation * 1) * speedMultiplier, 0);
-	this->br->Drive((forward - rotation * 1) * speedMultiplier, 0);
+void Drivetrain::Drive(double angle, double speed, double speedMultiplier) {
+	this->fl->Drive(speed * speedMultiplier, angle);
+	this->fr->Drive(speed * speedMultiplier, angle);
+	this->bl->Drive(speed * speedMultiplier, angle);
+	this->br->Drive(speed * speedMultiplier, angle);
 }
 
-void Drivetrain::CrabDrive(double x, double y, double rotation, double speedMultiplier) {
-	double forward, strafe;
-	if (x != 0 || y != 0 || rotation != 0) {
-		if (this->currentMode == Drivetrain::ControlMode::fieldOrientedSwerve) {
-			double heading = Robot::gyro->GetHeading();
-			forward = -x * sin(heading * PI / 180) + y * cos(heading * PI / 180);
-			strafe  =  x * cos(heading * PI / 180) + y * sin(heading * PI / 180);
-		} else {
-			forward = y;
-			strafe  = x;
-		}
+void Drivetrain::ArcadeDrive(double forward, double rotation, double speedMultiplier) {
+	double correction = 0.025 * (Robot::gyro->GetHeading() - desiredHeading);
+	SmartDashboard::PutNumber("Difference", correction);
+	this->fl->Drive((forward + rotation * 1 / sqrt(2) + correction) * speedMultiplier, 0);
+	this->fr->Drive((forward - rotation * 1 / sqrt(2) - correction) * speedMultiplier, 0);
+	this->bl->Drive((forward + rotation * 1 / sqrt(2) + correction) * speedMultiplier, 0);
+	this->br->Drive((forward - rotation * 1 / sqrt(2) - correction) * speedMultiplier, 0);
+}
 
+void Drivetrain::CrabDrive(double x, double y, double rotation, double speedMultiplier, bool useGyro) {
+	double forward, strafe;
+	if (useGyro) {
+		double heading = Robot::gyro->GetHeading();
+		forward = -x * sin(heading * PI / 180) + y * cos(heading * PI / 180);
+		strafe  =  x * cos(heading * PI / 180) + y * sin(heading * PI / 180);
+	} else {
+		forward = y;
+		strafe  = x;
+	}
+	if (x != 0 || y != 0 || rotation != 0) {
 		double back, front, right, left;
 
 		if (rotation != 0) {
@@ -109,33 +95,25 @@ void Drivetrain::CrabDrive(double x, double y, double rotation, double speedMult
 
 		if (rotation != 0) {
 			desiredHeading = Robot::gyro->GetHeading();
-			if (front != 0 || left != 0)
-				fla = fmod(-(atan2(front, left)  * 180 / PI) + 360, 360);
-			if (front != 0 || right != 0)
-				fra = fmod(-(atan2(front, right) * 180 / PI) + 360, 360);
-			if (back != 0 || left != 0)
-				bla = fmod(-(atan2(back,  left)  * 180 / PI) + 360, 360);
-			if (back != 0 || right != 0)
-				bra = fmod(-(atan2(back,  right) * 180 / PI) + 360, 360);
-		} else {
-			double correction = 0.125 * (Robot::gyro->GetHeading() - desiredHeading) - 0.005 * Robot::gyro->GetAngularRate();
-			SmartDashboard::PutNumber("Difference", correction);
-			if (front != 0 || left != 0)
-				fla = fmod(-(atan2(front, left)  * 180 / PI) + 360 + correction, 360);
-			if (front != 0 || right != 0)
-				fra = fmod(-(atan2(front, right) * 180 / PI) + 360 + correction, 360);
-			if (back != 0 || left != 0)
-				bla = fmod(-(atan2(back,  left)  * 180 / PI) + 360 + correction, 360);
-			if (back != 0 || right != 0)
-				bra = fmod(-(atan2(back,  right) * 180 / PI) + 360 + correction, 360);
 		}
+
+		if (front != 0 || left != 0)
+			fla = fmod(-(atan2(front, left)  * 180 / PI) + 360, 360);
+		if (front != 0 || right != 0)
+			fra = fmod(-(atan2(front, right) * 180 / PI) + 360, 360);
+		if (back != 0 || left != 0)
+			bla = fmod(-(atan2(back,  left)  * 180 / PI) + 360, 360);
+		if (back != 0 || right != 0)
+			bra = fmod(-(atan2(back,  right) * 180 / PI) + 360, 360);
 
 		SmartDashboard::PutNumber("Desired Heading", desiredHeading);
 
-		this->fl->Drive(flds * speedMultiplier, fla);
-		this->fr->Drive(frds * speedMultiplier, fra);
-		this->bl->Drive(blds * speedMultiplier, bla);
-		this->br->Drive(brds * speedMultiplier, bra);
+		double correction = 0.025 * (Robot::gyro->GetHeading() - desiredHeading);
+		SmartDashboard::PutNumber("Difference", correction);
+		this->fl->Drive((flds + correction) * speedMultiplier, fla);
+		this->fr->Drive((frds - correction) * speedMultiplier, fra);
+		this->bl->Drive((blds + correction) * speedMultiplier, bla);
+		this->br->Drive((brds - correction) * speedMultiplier, bra);
 	} else {
 		this->fl->Drive(0, this->fl->GetAngle());
 		this->fr->Drive(0, this->fr->GetAngle());

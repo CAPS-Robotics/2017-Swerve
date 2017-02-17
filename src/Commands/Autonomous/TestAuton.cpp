@@ -3,5 +3,5 @@
 #include <Commands/Drivetrain/DriveStraightForTime.h>
 
 TestAuton::TestAuton() {
-	AddSequential(new DriveUntilDistance(13));
+	AddSequential(new DriveUntilDistance(8.9));
 }

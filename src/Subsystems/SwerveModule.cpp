@@ -33,13 +33,13 @@ void SwerveModule::Drive(double speed, double angle) {
 	if (fabs(dist) > 90 && fabs(dist) < 270) {
 		angle = fmod(180 + angle, 360);
 		speed = -speed;
-	} else if (dist > 270) {
+	}/* else if (dist > 270) {
 		angle = 360 - angle;
 	} else if (dist < -270) {
 		angle = angle + 360;
-	}
+	}*/
 
-	if (speed == 0 || fabs(speed - currentSpeed) > 1.f) {
+	if (speed == 0 || fabs(speed - currentSpeed) > 1.2f) {
 		currentSpeed = 0;
 	} else if (currentSpeed > speed) {
 		currentSpeed -= 0.08;

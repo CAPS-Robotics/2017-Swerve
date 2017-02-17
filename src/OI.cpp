@@ -1,7 +1,6 @@
 #include "OI.h"
 
 #include <WPILib.h>
-#include "Commands/Drivetrain/SetArcadeMode.h"
 #include "Commands/Drivetrain/ReturnWheels.h"
 #include "Commands/Drivetrain/ZeroGyro.h"
 #include "Commands/Climber/Climb.h"
@@ -22,7 +21,6 @@ OI::OI() {
 	button11 = new JoystickButton(joy1, 11);
 	button12 = new JoystickButton(joy1, 12);
 
-	//button1->ToggleWhenPressed(new SetArcadeMode());
 	button2->WhileHeld(new ReturnWheels());
 	button3->WhileHeld(new Climb());
 	button4->WhileHeld(new StopClimbing());
@@ -49,5 +47,7 @@ float OI::applyDeadzone(float val, float deadzone) {
 	if (fabs(val) <= deadzone) {
 		return 0;
 	}
+	float sign = val / fabs(val);
+	val = sign * (fabs(val) - deadzone) / (1 - deadzone);
 	return val;
 }
