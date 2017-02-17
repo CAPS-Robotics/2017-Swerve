@@ -4,6 +4,7 @@
 #include "Robot.h"
 #include "WPILib.h"
 #include "Commands/Autonomous/TestAuton.h"
+#include "Commands/Drivetrain/ReturnWheels.h"
 #include <thread>
 
 std::shared_ptr<Drivetrain> Robot::drivetrain;
@@ -23,6 +24,7 @@ void Robot::RobotInit() {
 	this->autonomousCommand = new TestAuton();
 	std::thread vt(Robot::VisionThread);
 	vt.detach();
+	Robot::drivetrain->ReturnWheelsToZero();
 }
 
 void Robot::DisabledInit() {

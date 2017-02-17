@@ -15,6 +15,7 @@ public:
 	void StopClimber();
 	void InitDefaultCommand();
 	CANTalon * GetClimber1();
+	CANTalon * GetClimber2();
 	double Get1Current();
 	double Get2Current();
 };

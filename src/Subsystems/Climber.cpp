@@ -25,6 +25,10 @@ CANTalon * Climber::GetClimber1() {
 	return this->climber1;
 }
 
+CANTalon * Climber::GetClimber2() {
+	return this->climber2;
+}
+
 double Climber::Get1Current() {
 	return this->climber1->GetOutputCurrent();
 }

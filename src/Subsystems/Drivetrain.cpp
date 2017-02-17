@@ -6,10 +6,10 @@
 
 Drivetrain::Drivetrain() : Subsystem("Drivetrain") {
 	Robot::gyro.get();
-	this->fl = new SwerveModule(FL_TALON_SRX, FL_DRIVE_TALON, true);
-	this->fr = new SwerveModule(FR_TALON_SRX, FR_DRIVE_TALON, false);
-	this->bl = new SwerveModule(BL_TALON_SRX, BL_DRIVE_TALON, true);
-	this->br = new SwerveModule(BR_TALON_SRX, BR_DRIVE_TALON, false);
+	this->fl = new SwerveModule(FL_TALON_SRX, FL_DRIVE_TALON, FL_STEER_ENCODER, 4.7485, true);
+	this->fr = new SwerveModule(FR_TALON_SRX, FR_DRIVE_TALON, FR_STEER_ENCODER, 3.1104, false);
+	this->bl = new SwerveModule(BL_TALON_SRX, BL_DRIVE_TALON, BL_STEER_ENCODER, 2.4633, true);
+	this->br = new SwerveModule(BR_TALON_SRX, BR_DRIVE_TALON, BR_STEER_ENCODER, 2.0386, false);
 	this->rangeFinder = new AnalogInput(RANGE_FINDER);
 	this->desiredHeading = 0;
 }
@@ -54,6 +54,10 @@ void Drivetrain::ArcadeDrive(double forward, double rotation, double speedMultip
 
 void Drivetrain::CrabDrive(double x, double y, double rotation, double speedMultiplier, bool useGyro) {
 	double forward, strafe;
+	SmartDashboard::PutNumber("FL Angle", fl->GetAngle());
+	SmartDashboard::PutNumber("FR Angle", fr->GetAngle());
+	SmartDashboard::PutNumber("BL Angle", bl->GetAngle());
+	SmartDashboard::PutNumber("BR Angle", br->GetAngle());
 	if (useGyro) {
 		double heading = Robot::gyro->GetHeading();
 		forward = -x * sin(heading * PI / 180) + y * cos(heading * PI / 180);
@@ -92,32 +96,42 @@ void Drivetrain::CrabDrive(double x, double y, double rotation, double speedMult
 
 		double fla = 0, fra = 0, bla = 0, bra = 0;
 
-
 		if (rotation != 0) {
 			desiredHeading = Robot::gyro->GetHeading();
 		}
 
-		if (front != 0 || left != 0)
-			fla = fmod(-(atan2(front, left)  * 180 / PI) + 360, 360);
-		if (front != 0 || right != 0)
-			fra = fmod(-(atan2(front, right) * 180 / PI) + 360, 360);
-		if (back != 0 || left != 0)
-			bla = fmod(-(atan2(back,  left)  * 180 / PI) + 360, 360);
-		if (back != 0 || right != 0)
-			bra = fmod(-(atan2(back,  right) * 180 / PI) + 360, 360);
-
+		if (front != 0 || left != 0) {
+			fla = fmod(5 + (2.5 / PI) * -atan2(front, left),  5);
+		} else {
+			fla = 0;
+		}
+		if (front != 0 || right != 0) {
+			fra = fmod(5 + (2.5 / PI) * -atan2(front, right), 5);
+		} else {
+			fra = 0;
+		}
+		if (back != 0 || left != 0) {
+			bla = fmod(5 + (2.5 / PI) * -atan2(back,  left),  5);
+		} else {
+			bla = 0;
+		}
+		if (back != 0 || right != 0) {
+			bra = fmod(5 + (2.5 / PI) * -atan2(back,  right), 5);
+		} else {
+			bra = 0;
+		}
 		SmartDashboard::PutNumber("Desired Heading", desiredHeading);
 
-		double correction = 0.025 * (Robot::gyro->GetHeading() - desiredHeading);
+		double correction = 0; //-0.0025 * (Robot::gyro->GetHeading() - desiredHeading);
 		SmartDashboard::PutNumber("Difference", correction);
 		this->fl->Drive((flds + correction) * speedMultiplier, fla);
 		this->fr->Drive((frds - correction) * speedMultiplier, fra);
 		this->bl->Drive((blds + correction) * speedMultiplier, bla);
 		this->br->Drive((brds - correction) * speedMultiplier, bra);
 	} else {
-		this->fl->Drive(0, this->fl->GetAngle());
-		this->fr->Drive(0, this->fr->GetAngle());
-		this->bl->Drive(0, this->bl->GetAngle());
-		this->br->Drive(0, this->br->GetAngle());
+		this->fl->Drive(0, this->fl->GetAngle() / 72.f);
+		this->fr->Drive(0, this->fr->GetAngle() / 72.f);
+		this->bl->Drive(0, this->bl->GetAngle() / 72.f);
+		this->br->Drive(0, this->br->GetAngle() / 72.f);
 	}
 }

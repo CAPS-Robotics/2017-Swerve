@@ -2,70 +2,47 @@
 #include "../RobotMap.h"
 #include <CANTalon.h>
 
-SwerveModule::SwerveModule(int steerMotor, int driveMotor, bool isInverted) : Subsystem("SwerveModule") {
+SwerveModule::SwerveModule(int steerMotor, int driveMotor, int encoder, float offset, bool isInverted) : Subsystem("SwerveModule") {
 	this->steer = new CANTalon(steerMotor);
+	this->steer->ConfigNeutralMode(CANTalon::NeutralMode::kNeutralMode_Brake);
+	this->offset = offset;
 	this->drive = new Talon(driveMotor);
 	this->drive->SetInverted(isInverted);
-	// Init the Talon SRX
-	steer->SetFeedbackDevice(CANTalon::FeedbackDevice::QuadEncoder);
-	steer->ConfigEncoderCodesPerRev(497);
-	steer->SetControlMode(CANTalon::kPosition);
-	steer->SetPosition(0);
-	steer->SetPID(2.5f, 0.0002f, 0.0005f);
-	steer->ConfigNeutralMode(CANTalon::NeutralMode::kNeutralMode_Brake);
-	steer->SetAllowableClosedLoopErr(1);
-	steer->Enable();
-	currentSpeed = 0;
-	steer->Set(0);
+	this->positionEncoder = new AnalogInput(encoder);
+	this->pid = new PIDController(4.0, 0.0, 0.0, this->positionEncoder, this->steer, 0.002);
+	this->pid->SetContinuous(true);
+	this->pid->SetTolerance(0.01);
+	this->pid->SetInputRange(0.0, 5.0);
+	this->pid->SetOutputRange(-1.0, 1.0);
+	this->pid->Enable();
 }
 
 void SwerveModule::InitDefaultCommand() {
 
 }
 
-void SwerveModule::Drive(double speed, double angle) {
+void SwerveModule::Drive(double speed, double setpoint) {
 	speed = fabs(speed) > 0.1 ? speed : 0;
+	double currentPos = fmod(this->positionEncoder->GetVoltage() - offset + 5, 5);
 
-	double dist = angle - this->GetAngle();
+	double dist = setpoint - currentPos;
 
-	SmartDashboard::PutNumber("Dist", dist);
-
-	if (fabs(dist) > 90 && fabs(dist) < 270) {
-		angle = fmod(180 + angle, 360);
-		speed = -speed;
-	}/* else if (dist > 270) {
-		angle = 360 - angle;
-	} else if (dist < -270) {
-		angle = angle + 360;
-	}*/
-
-	if (speed == 0 || fabs(speed - currentSpeed) > 1.2f) {
-		currentSpeed = 0;
-	} else if (currentSpeed > speed) {
-		currentSpeed -= 0.08;
-	} else if (currentSpeed < speed) {
-		currentSpeed += 0.08;
+	if (fabs(dist) > 1.25 && fabs(dist) < 3.75) {
+		setpoint = fmod(setpoint + 2.5, 5);
+		speed *= -1;
 	}
 
-	this->drive->Set(currentSpeed);
-	this->steer->Set(angle / 1.2 / 360);
+	SmartDashboard::PutNumber("Distance", dist);
+
+	this->pid->SetSetpoint(fmod(setpoint + offset, 5));
+	this->drive->Set(speed);
 }
 
 void SwerveModule::ReturnToZero() {
-	this->steer->Set(0);
-}
-
-void SwerveModule::ResetEncoder() {
-	this->steer->SetPosition(0);
+	this->pid->SetSetpoint(offset);
+	SmartDashboard::PutNumber("Setpoint", this->pid->GetSetpoint());
 }
 
 double SwerveModule::GetAngle() {
-	float someAngle = this->steer->Get() * 1.2 * 360;
-	while (someAngle > 360.f) {
-		someAngle -= 360;
-	}
-	while (someAngle < 0.f) {
-		someAngle += 360;
-	}
-	return someAngle;
+	return fmod(this->positionEncoder->GetVoltage() - offset + 5, 5) * 72.f;
 }
