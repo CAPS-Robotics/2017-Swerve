@@ -1,5 +1,5 @@
-#ifndef DriveUntilDistance_H
-#define DriveUntilDistance_H
+#ifndef RotateToAngle_H
+#define RotateToAngle_H
 
 #include "WPILib.h"
 
@@ -14,4 +14,4 @@ public:
 	void Interrupted();
 };
 
-#endif  // DriveUntilDistance_H
+#endif  // RotateToAngle_H

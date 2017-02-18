@@ -4,5 +4,5 @@
 #include <Commands/Autonomous/DriveStraightForTime.h>
 
 TestAuton::TestAuton() {
-	AddSequential(new DriveUntilDistance(8.9));
+	AddSequential(new RotateToAngle(60));
 }

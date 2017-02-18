@@ -13,6 +13,7 @@ public:
 	PigeonNav();
 	double GetHeading();
 	double GetAngularRate();
+	double PIDGet();
 	void ResetHeading();
 	void InitDefaultCommand();
 };

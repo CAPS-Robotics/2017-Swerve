@@ -32,6 +32,16 @@ void SwerveModule::Drive(double speed, double setpoint) {
 		speed *= -1;
 	}
 
+	if (setpoint >= 1.20 && setpoint <= 1.30) {
+		setpoint = 1.25;
+	} else if (setpoint >= 2.45 && setpoint <= 2.55) {
+		setpoint = 2.50;
+	} else if (setpoint >= 3.70 && setpoint <= 3.80) {
+		setpoint = 3.75;
+	} else if (setpoint <= 0.05 || setpoint >= 4.95) {
+		setpoint = 0;
+	}
+
 	SmartDashboard::PutNumber("Distance", dist);
 
 	this->pid->SetSetpoint(fmod(setpoint + offset, 5));

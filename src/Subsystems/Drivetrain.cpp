@@ -13,7 +13,7 @@ Drivetrain::Drivetrain() : Subsystem("Drivetrain") {
 	this->br = new SwerveModule(BR_TALON_SRX, BR_DRIVE_TALON, BR_STEER_ENCODER, 2.0386, false);
 	this->rangeFinder = new AnalogInput(RANGE_FINDER);
 	this->desiredHeading = 0;
-	this->rotationPid = new PIDController(1.0, 0.0, 0.0, Robot::gyro, new RobotSpin(), 0.02);
+	this->rotationPid = new PIDController(1.0, 0.0, 0.0, Robot::gyro.get(), new RobotSpin(), 0.02);
 	this->rotationPid->SetContinuous(true);
 	this->rotationPid->SetAbsoluteTolerance(1);
 	this->rotationPid->SetInputRange(-360, 360);

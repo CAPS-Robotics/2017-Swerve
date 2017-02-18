@@ -5,6 +5,6 @@
 
 LeftStationAuton::LeftStationAuton() {
 	AddSequential(new DriveStraightForTime(2));
-	AddSequential(new RotateToAngle(-120));
+	AddSequential(new RotateToAngle(-60));
 	AddSequential(new DriveUntilDistance(8.9));
 }

@@ -3,6 +3,7 @@
 #include "OI.h"
 #include "Robot.h"
 #include "WPILib.h"
+#include "Commands/Autonomous/TestAuton.h"
 #include "Commands/Autonomous/LeftStationAuton.h"
 #include "Commands/Autonomous/MiddleStationAuton.h"
 #include "Commands/Autonomous/RightStationAuton.h"
@@ -25,10 +26,11 @@ void Robot::RobotInit() {
 	std::thread vt(Robot::VisionThread);
 	vt.detach();
 
-	this->autoPicker = new SendableChooser();
+	this->autoPicker = new SendableChooser<Command *>();
 	this->autoPicker->AddDefault("Middle Station Auton", new MiddleStationAuton());
 	this->autoPicker->AddObject("Left Station Auton", new LeftStationAuton());
 	this->autoPicker->AddObject("Right Station Auton", new RightStationAuton());
+	this->autoPicker->AddObject("Test Auton", new TestAuton());
 	SmartDashboard::PutData("Auto Picker", this->autoPicker);
 }
 
@@ -42,7 +44,7 @@ void Robot::DisabledPeriodic() {
 }
 
 void Robot::AutonomousInit() {
-	autonomousCommand = (Command) autoPicker->GetSelected();
+	autonomousCommand = (Command *) autoPicker->GetSelected();
 	autonomousCommand->Start();
 }
 

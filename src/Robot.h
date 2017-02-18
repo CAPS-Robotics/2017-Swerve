@@ -6,7 +6,7 @@
 
 class Robot: public frc::IterativeRobot {
 	Command * autonomousCommand;
-	SendableChooser * autoPicker;
+	SendableChooser<Command *> * autoPicker;
 public:
 	Robot();
 	void RobotInit() override;
