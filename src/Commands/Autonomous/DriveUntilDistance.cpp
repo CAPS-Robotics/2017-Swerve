@@ -11,6 +11,7 @@ DriveUntilDistance::DriveUntilDistance(float distance) {
 
 // Called just before this  runs the first time
 void DriveUntilDistance::Initialize() {
+	Robot::drivetrain->ReturnWheelsToZero();
 }
 
 // Called repeatedly when this  is scheduled to run
@@ -18,16 +19,6 @@ void DriveUntilDistance::Execute() {
 	if (Robot::drivetrain->GetDistanceAway() < distance) {
 		End();
 	}
-	/*if (fabs(Robot::drivetrain->GetDistanceAway() - distance) < 6) {
-		speed -= 0.05;
-	} else {
-		speed += 0.05;
-	}
-	if (speed <= 0.2) {
-		speed += 0.05;
-	} else if (speed >= 0.75) {
-		speed -= 0.05;
-	}*/
 	Robot::drivetrain->ArcadeDrive(0.35, 0, 1);
 }
 

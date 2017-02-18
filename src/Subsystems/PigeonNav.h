@@ -5,7 +5,7 @@
 #include "WPILib.h"
 #include "Commands/Subsystem.h"
 
-class PigeonNav : public Subsystem {
+class PigeonNav : public Subsystem, public PIDSource {
 private:
 	PigeonImu * gyro;
 	double * ypr;

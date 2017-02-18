@@ -17,9 +17,15 @@ void DriveWithJoysticks::Initialize() {
 void DriveWithJoysticks::Execute() {
 	double speedMultiplier = (1 - Robot::oi->GetSlider()) / 2;
 	if (Robot::oi->joy1->GetRawButton(1)) {
-		Robot::drivetrain->ArcadeDrive(Robot::oi->GetY(), Robot::oi->GetTwist(), speedMultiplier);
-	} else if (Robot::oi->joy1->GetRawButton(7)) {
-		Robot::drivetrain->Drive(90, Robot::oi->GetY(), speedMultiplier);
+		Robot::drivetrain->CrabDrive(Robot::oi->GetX(), Robot::oi->GetY(), 0, speedMultiplier, false);
+	} else if (Robot::oi->joy1->GetPOV() == 0) {
+		Robot::drivetrain->Drive(0, 	Robot::oi->GetY(), speedMultiplier);
+	} else if (Robot::oi->joy1->GetPOV() == 90) {
+		Robot::drivetrain->Drive(1.25, -Robot::oi->GetX(), speedMultiplier);
+	} else if (Robot::oi->joy1->GetPOV() == 180) {
+		Robot::drivetrain->Drive(2.5,  -Robot::oi->GetY(), speedMultiplier);
+	} else if (Robot::oi->joy1->GetPOV() == 270) {
+		Robot::drivetrain->Drive(3.75,  Robot::oi->GetX(), speedMultiplier);
 	} else {
 		Robot::drivetrain->CrabDrive(Robot::oi->GetX(), Robot::oi->GetY(), Robot::oi->GetTwist(), speedMultiplier, true);
 	}

@@ -3,6 +3,7 @@
 #include "../RobotMap.h"
 #include "SwerveModule.h"
 #include <Commands/Drivetrain/DriveWithJoysticks.h>
+#include "RobotSpin.h"
 
 Drivetrain::Drivetrain() : Subsystem("Drivetrain") {
 	Robot::gyro.get();
@@ -12,6 +13,11 @@ Drivetrain::Drivetrain() : Subsystem("Drivetrain") {
 	this->br = new SwerveModule(BR_TALON_SRX, BR_DRIVE_TALON, BR_STEER_ENCODER, 2.0386, false);
 	this->rangeFinder = new AnalogInput(RANGE_FINDER);
 	this->desiredHeading = 0;
+	this->rotationPid = new PIDController(1.0, 0.0, 0.0, Robot::gyro, new RobotSpin(), 0.02);
+	this->rotationPid->SetContinuous(true);
+	this->rotationPid->SetAbsoluteTolerance(1);
+	this->rotationPid->SetInputRange(-360, 360);
+	this->rotationPid->SetOutputRange(-0.5, 0.5);
 }
 
 void Drivetrain::InitDefaultCommand() {
@@ -41,6 +47,13 @@ void Drivetrain::Drive(double angle, double speed, double speedMultiplier) {
 	this->fr->Drive(speed * speedMultiplier, angle);
 	this->bl->Drive(speed * speedMultiplier, angle);
 	this->br->Drive(speed * speedMultiplier, angle);
+}
+
+void Drivetrain::RotateRobot(double speed) {
+	this->fl->Drive( speed, -0.625);
+	this->fr->Drive(-speed,  0.625);
+	this->bl->Drive( speed,  0.625);
+	this->br->Drive(-speed, -0.625);
 }
 
 void Drivetrain::ArcadeDrive(double forward, double rotation, double speedMultiplier) {

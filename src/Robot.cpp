@@ -3,8 +3,9 @@
 #include "OI.h"
 #include "Robot.h"
 #include "WPILib.h"
-#include "Commands/Autonomous/TestAuton.h"
-#include "Commands/Drivetrain/ReturnWheels.h"
+#include "Commands/Autonomous/LeftStationAuton.h"
+#include "Commands/Autonomous/MiddleStationAuton.h"
+#include "Commands/Autonomous/RightStationAuton.h"
 #include <thread>
 
 std::shared_ptr<Drivetrain> Robot::drivetrain;
@@ -21,10 +22,14 @@ void Robot::RobotInit() {
 	Robot::climber.reset(new Climber());
 	Robot::gyro.reset(new PigeonNav());
 	Robot::oi.reset(new OI());
-	this->autonomousCommand = new TestAuton();
 	std::thread vt(Robot::VisionThread);
 	vt.detach();
-	Robot::drivetrain->ReturnWheelsToZero();
+
+	this->autoPicker = new SendableChooser();
+	this->autoPicker->AddDefault("Middle Station Auton", new MiddleStationAuton());
+	this->autoPicker->AddObject("Left Station Auton", new LeftStationAuton());
+	this->autoPicker->AddObject("Right Station Auton", new RightStationAuton());
+	SmartDashboard::PutData("Auto Picker", this->autoPicker);
 }
 
 void Robot::DisabledInit() {
@@ -37,9 +42,8 @@ void Robot::DisabledPeriodic() {
 }
 
 void Robot::AutonomousInit() {
-	if (autonomousCommand != NULL) {
-		autonomousCommand->Start();
-	}
+	autonomousCommand = (Command) autoPicker->GetSelected();
+	autonomousCommand->Start();
 }
 
 void Robot::AutonomousPeriodic() {
@@ -62,16 +66,19 @@ void Robot::VisionThread() {
 }
 
 void Robot::TeleopInit() {
+	if (autonomousCommand != nullptr) {
+		autonomousCommand->Cancel();
+	}
 }
 
 void Robot::TeleopPeriodic() {
-	SmartDashboard::PutNumber("FL Angle", Robot::drivetrain->fl->GetAngle());
-	SmartDashboard::PutNumber("FR Angle", Robot::drivetrain->fr->GetAngle());
-	SmartDashboard::PutNumber("BL Angle", Robot::drivetrain->bl->GetAngle());
-	SmartDashboard::PutNumber("BR Angle", Robot::drivetrain->br->GetAngle());
-	SmartDashboard::PutNumber("Distance Away", Robot::drivetrain->GetDistanceAway());
-	SmartDashboard::PutNumber("Heading", Robot::gyro->GetHeading());
-	SmartDashboard::PutNumber("Angular Rate", Robot::gyro->GetAngularRate());
+	SmartDashboard::PutNumber("FL Angle", 		Robot::drivetrain->fl->GetAngle());
+	SmartDashboard::PutNumber("FR Angle", 		Robot::drivetrain->fr->GetAngle());
+	SmartDashboard::PutNumber("BL Angle", 		Robot::drivetrain->bl->GetAngle());
+	SmartDashboard::PutNumber("BR Angle", 		Robot::drivetrain->br->GetAngle());
+	SmartDashboard::PutNumber("Distance Away", 	Robot::drivetrain->GetDistanceAway());
+	SmartDashboard::PutNumber("Heading", 		Robot::gyro->GetHeading());
+	SmartDashboard::PutNumber("Angular Rate", 	Robot::gyro->GetAngularRate());
 
 	frc::Scheduler::GetInstance()->Run();
 }

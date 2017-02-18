@@ -10,8 +10,12 @@ PigeonNav::PigeonNav() : Subsystem("PigeonNav") {
 	this->ResetHeading();
 }
 
+double PigeonNav::PIDGet() {
+	return this->GetHeading();
+}
+
 double PigeonNav::GetHeading() {
-	return this->gyro->GetFusedHeading();
+	return fmod(this->gyro->GetFusedHeading(), 360);
 }
 
 double PigeonNav::GetAngularRate() {

@@ -11,6 +11,7 @@ private:
 	AnalogInput * rangeFinder;
 	double desiredHeading;
 public:
+	PIDController * rotationPid;
 	SwerveModule * fl;
 	SwerveModule * fr;
 	SwerveModule * bl;
@@ -18,6 +19,7 @@ public:
 	Drivetrain();
 	void InitDefaultCommand();
 	double GetDistanceAway();
+	void RotateRobot(double speed);
 	void ReturnWheelsToZero();
 	void Drive(double angle, double speed, double speedMultiplier);
 	void CrabDrive(double x, double y, double rotation, double speedMultiplier, bool useGyro);
