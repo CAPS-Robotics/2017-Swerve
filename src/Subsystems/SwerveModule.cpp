@@ -15,6 +15,7 @@ SwerveModule::SwerveModule(int steerMotor, int driveMotor, int encoder, float of
 	this->pid->SetInputRange(0.0, 5.0);
 	this->pid->SetOutputRange(-1.0, 1.0);
 	this->pid->Enable();
+	currentSpeed = 0;
 }
 
 void SwerveModule::InitDefaultCommand() {
@@ -32,7 +33,7 @@ void SwerveModule::Drive(double speed, double setpoint) {
 		speed *= -1;
 	}
 
-	if (setpoint >= 1.20 && setpoint <= 1.30) {
+	/*if (setpoint >= 1.20 && setpoint <= 1.30) {
 		setpoint = 1.25;
 	} else if (setpoint >= 2.45 && setpoint <= 2.55) {
 		setpoint = 2.50;
@@ -40,12 +41,20 @@ void SwerveModule::Drive(double speed, double setpoint) {
 		setpoint = 3.75;
 	} else if (setpoint <= 0.05 || setpoint >= 4.95) {
 		setpoint = 0;
+	}*/
+
+	if (speed == 0 || fabs(speed - currentSpeed) > 1.f) {
+		currentSpeed = 0;
+	} else if (currentSpeed > speed) {
+		currentSpeed -= 0.04;
+	} else if (currentSpeed < speed) {
+		currentSpeed += 0.04;
 	}
 
 	SmartDashboard::PutNumber("Distance", dist);
 
 	this->pid->SetSetpoint(fmod(setpoint + offset, 5));
-	this->drive->Set(speed);
+	this->drive->Set(currentSpeed);
 }
 
 void SwerveModule::ReturnToZero() {

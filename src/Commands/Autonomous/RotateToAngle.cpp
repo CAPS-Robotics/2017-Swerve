@@ -20,7 +20,7 @@ void RotateToAngle::Execute() {
 
 // Make this return true when this  no longer needs to run execute()
 bool RotateToAngle::IsFinished() {
-	return (Robot::gyro->GetHeading() - angle) < 3;
+	return (Robot::gyro->GetHeading() - Robot::drivetrain->) < 3;
 }
 
 // Called once after isFinished returns true

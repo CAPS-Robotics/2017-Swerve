@@ -36,7 +36,7 @@ float OI::GetY() {
 }
 
 float OI::GetTwist() {
-	return this->applyDeadzone(joy1->GetRawAxis(2), 0.70);
+	return this->applyDeadzone(joy1->GetRawAxis(2), 0.70) / 2;
 }
 
 float OI::GetSlider() {

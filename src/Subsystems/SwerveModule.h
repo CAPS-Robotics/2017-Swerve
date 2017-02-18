@@ -9,6 +9,7 @@ class SwerveModule : public Subsystem {
 private:
 	Talon * drive;
 	float offset;
+	float currentSpeed;
 public:
 	CANTalon * steer;
 	PIDController * pid;
