@@ -4,7 +4,7 @@
 #include <Commands/Autonomous/DriveStraightForTime.h>
 
 RightStationAuton::RightStationAuton() {
-	AddSequential(new DriveStraightForTime(2));
-	AddSequential((Command *) new RotateToAngle(60));
-	AddSequential(new DriveUntilDistance(8.9));
+	AddSequential(new DriveStraightForTime(2.4));
+	AddSequential(new RotateToAngle(60));
+	AddSequential(new DriveUntilDistance(9.3));
 }

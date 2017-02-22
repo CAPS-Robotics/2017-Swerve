@@ -7,10 +7,10 @@
 
 Drivetrain::Drivetrain() : Subsystem("Drivetrain") {
 	Robot::gyro.get();
-	this->fl = new SwerveModule(FL_TALON_SRX, FL_DRIVE_TALON, FL_STEER_ENCODER, 4.7485, true);
-	this->fr = new SwerveModule(FR_TALON_SRX, FR_DRIVE_TALON, FR_STEER_ENCODER, 3.1104, false);
-	this->bl = new SwerveModule(BL_TALON_SRX, BL_DRIVE_TALON, BL_STEER_ENCODER, 2.4633, true);
-	this->br = new SwerveModule(BR_TALON_SRX, BR_DRIVE_TALON, BR_STEER_ENCODER, 2.0386, false);
+	this->fl = new SwerveModule(FL_TALON_SRX, FL_DRIVE_TALON, FL_STEER_ENCODER, 4.5068, true);
+	this->fr = new SwerveModule(FR_TALON_SRX, FR_DRIVE_TALON, FR_STEER_ENCODER, 3.5009, false);
+	this->bl = new SwerveModule(BL_TALON_SRX, BL_DRIVE_TALON, BL_STEER_ENCODER, 2.4670, true);
+	this->br = new SwerveModule(BR_TALON_SRX, BR_DRIVE_TALON, BR_STEER_ENCODER, 0.6079, false);
 	this->rangeFinder = new AnalogInput(RANGE_FINDER);
 	this->desiredHeading = 0;
 	this->rotationPid = new PIDController(1.0, 0.0, 0.0, Robot::gyro.get(), new RobotSpin(), 0.02);
@@ -57,7 +57,7 @@ void Drivetrain::RotateRobot(double speed) {
 }
 
 void Drivetrain::ArcadeDrive(double forward, double rotation, double speedMultiplier) {
-	double correction = 0.025 * (Robot::gyro->GetHeading() - desiredHeading);
+	double correction = 0; //0.025 * (Robot::gyro->GetHeading() - desiredHeading);
 	SmartDashboard::PutNumber("Difference", correction);
 	this->fl->Drive((forward + rotation * 1 / sqrt(2) + correction) * speedMultiplier, 0);
 	this->fr->Drive((forward - rotation * 1 / sqrt(2) - correction) * speedMultiplier, 0);

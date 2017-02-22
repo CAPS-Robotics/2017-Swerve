@@ -16,19 +16,22 @@ void DriveUntilDistance::Initialize() {
 
 // Called repeatedly when this  is scheduled to run
 void DriveUntilDistance::Execute() {
+	SmartDashboard::PutString("Drive Until Distance", "Running");
+	Robot::drivetrain->Drive(0, 0.35, 1);
 	if (Robot::drivetrain->GetDistanceAway() < distance) {
 		End();
 	}
-	Robot::drivetrain->ArcadeDrive(0.35, 0, 1);
 }
 
 // Make this return true when this  no longer needs to run execute()
 bool DriveUntilDistance::IsFinished() {
+	SmartDashboard::PutNumber("Target Distance", Robot::drivetrain->GetDistanceAway());
 	return Robot::drivetrain->GetDistanceAway() < distance;
 }
 
 // Called once after isFinished returns true
 void DriveUntilDistance::End() {
+	SmartDashboard::PutString("Drive Until Distance", "Done");
 	Robot::drivetrain->Brake();
 }
 

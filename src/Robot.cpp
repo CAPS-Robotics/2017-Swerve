@@ -11,6 +11,7 @@
 
 std::shared_ptr<Drivetrain> Robot::drivetrain;
 std::shared_ptr<Climber> Robot::climber;
+std::shared_ptr<Vision> Robot::vision;
 std::shared_ptr<PigeonNav> Robot::gyro;
 std::shared_ptr<OI> Robot::oi;
 
@@ -22,6 +23,7 @@ void Robot::RobotInit() {
 	Robot::drivetrain.reset(new Drivetrain());
 	Robot::climber.reset(new Climber());
 	Robot::gyro.reset(new PigeonNav());
+	Robot::vision.reset(new Vision());
 	Robot::oi.reset(new OI());
 	std::thread vt(Robot::VisionThread);
 	vt.detach();
@@ -35,7 +37,7 @@ void Robot::RobotInit() {
 }
 
 void Robot::DisabledInit() {
-
+	autonomousCommand = nullptr;
 }
 
 
@@ -74,6 +76,10 @@ void Robot::TeleopInit() {
 }
 
 void Robot::TeleopPeriodic() {
+	SmartDashboard::PutNumber("FL Voltage", 	Robot::drivetrain->fl->positionEncoder->GetVoltage());
+	SmartDashboard::PutNumber("FR Voltage", 	Robot::drivetrain->fr->positionEncoder->GetVoltage());
+	SmartDashboard::PutNumber("BL Voltage", 	Robot::drivetrain->bl->positionEncoder->GetVoltage());
+	SmartDashboard::PutNumber("BR Voltage", 	Robot::drivetrain->br->positionEncoder->GetVoltage());
 	SmartDashboard::PutNumber("FL Angle", 		Robot::drivetrain->fl->GetAngle());
 	SmartDashboard::PutNumber("FR Angle", 		Robot::drivetrain->fr->GetAngle());
 	SmartDashboard::PutNumber("BL Angle", 		Robot::drivetrain->bl->GetAngle());
@@ -81,6 +87,7 @@ void Robot::TeleopPeriodic() {
 	SmartDashboard::PutNumber("Distance Away", 	Robot::drivetrain->GetDistanceAway());
 	SmartDashboard::PutNumber("Heading", 		Robot::gyro->GetHeading());
 	SmartDashboard::PutNumber("Angular Rate", 	Robot::gyro->GetAngularRate());
+	SmartDashboard::PutNumber("Center X", 		Robot::vision->GetCentralValue());
 
 	frc::Scheduler::GetInstance()->Run();
 }

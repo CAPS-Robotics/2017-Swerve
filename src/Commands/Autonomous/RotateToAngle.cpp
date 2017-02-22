@@ -10,26 +10,32 @@ RotateToAngle::RotateToAngle(float angle) {
 
 // Called just before this  runs the first time
 void RotateToAngle::Initialize() {
-	Robot::drivetrain->rotationPid->Enable();
 }
 
 // Called repeatedly when this  is scheduled to run
 void RotateToAngle::Execute() {
-	Robot::drivetrain->rotationPid->SetSetpoint(angle);
+	if ((Robot::gyro->GetHeading() - angle) > 0) {
+		Robot::drivetrain->RotateRobot(0.3);
+	} else {
+		Robot::drivetrain->RotateRobot(-0.3);
+	}
+	SmartDashboard::PutString("Rotate Finished", "In Progress!");
 }
 
 // Make this return true when this  no longer needs to run execute()
 bool RotateToAngle::IsFinished() {
-	return (Robot::gyro->GetHeading() - Robot::drivetrain->) < 3;
+	return fabs(Robot::gyro->GetHeading() - angle) < 7;
 }
 
 // Called once after isFinished returns true
 void RotateToAngle::End() {
-	Robot::drivetrain->rotationPid->Disable();
+	SmartDashboard::PutString("Rotate Finished", "Done!");
+	Robot::drivetrain->ReturnWheelsToZero();
 	Robot::drivetrain->Brake();
 }
 
 // Called when another  which requires one or more of the same
 // subsystems is scheduled to run
 void RotateToAngle::Interrupted() {
+
 }

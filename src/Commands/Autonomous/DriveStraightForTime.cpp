@@ -15,7 +15,7 @@ void DriveStraightForTime::Initialize() {
 
 // Called repeatedly when this Command is scheduled to run
 void DriveStraightForTime::Execute() {
-	Robot::drivetrain->CrabDrive(0, 0.6, 0, 1, false);
+	Robot::drivetrain->ArcadeDrive(0.4, 0, 1);
 }
 
 // Called once after command times out

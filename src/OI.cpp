@@ -4,6 +4,8 @@
 #include "Commands/Drivetrain/ReturnWheels.h"
 #include "Commands/Drivetrain/ZeroGyro.h"
 #include "Commands/Climber/Climb.h"
+#include "Commands/Autonomous/RotateToAngle.h"
+#include "Commands/Autonomous/StrafeAlign.h"
 #include "Commands/Climber/StopClimbing.h"
 
 OI::OI() {
@@ -25,6 +27,10 @@ OI::OI() {
 	button3->WhileHeld(new Climb());
 	button4->WhileHeld(new StopClimbing());
 	button6->WhenPressed(new ZeroGyro());
+	button7->WhenPressed(new RotateToAngle(-60));
+	button8->WhenPressed(new RotateToAngle(60));
+	button10->WhenPressed(new RotateToAngle(0));
+	button12->WhenPressed(new StrafeAlign());
 }
 
 float OI::GetX() {
