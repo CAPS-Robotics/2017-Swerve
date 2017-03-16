@@ -24,6 +24,7 @@ void SwerveModule::InitDefaultCommand() {
 
 void SwerveModule::Drive(double speed, double setpoint) {
 	speed = fabs(speed) > 0.1 ? speed : 0;
+	setpoint /= 72.f;
 	double currentPos = fmod(this->positionEncoder->GetVoltage() - offset + 5, 5);
 
 	double dist = setpoint - currentPos;
@@ -32,16 +33,6 @@ void SwerveModule::Drive(double speed, double setpoint) {
 		setpoint = fmod(setpoint + 2.5, 5);
 		speed *= -1;
 	}
-
-	/*if (setpoint >= 1.20 && setpoint <= 1.30) {
-		setpoint = 1.25;
-	} else if (setpoint >= 2.45 && setpoint <= 2.55) {
-		setpoint = 2.50;
-	} else if (setpoint >= 3.70 && setpoint <= 3.80) {
-		setpoint = 3.75;
-	} else if (setpoint <= 0.05 || setpoint >= 4.95) {
-		setpoint = 0;
-	}*/
 
 	if (speed == 0 || fabs(speed - currentSpeed) > 1.f) {
 		currentSpeed = 0;

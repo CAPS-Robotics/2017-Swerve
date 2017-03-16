@@ -1,10 +1,10 @@
 #include <Commands/Autonomous/RightStationAuton.h>
-#include <Commands/Autonomous/DriveUntilDistance.h>
-#include <Commands/Autonomous/RotateToAngle.h>
+#include <Commands/Autonomous/PlaceGear.h>
+#include <Commands/Drivetrain/ZeroGyro.h>
 #include <Commands/Autonomous/DriveStraightForTime.h>
 
 RightStationAuton::RightStationAuton() {
-	AddSequential(new DriveStraightForTime(2.4));
-	AddSequential(new RotateToAngle(60));
-	AddSequential(new DriveUntilDistance(9.3));
+	AddSequential(new ZeroGyro());
+	AddSequential(new DriveStraightForTime(2.65));
+	AddSequential(new PlaceGear(60));
 }

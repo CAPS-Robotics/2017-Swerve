@@ -17,22 +17,19 @@ void StrafeAlign::Initialize() {
 void StrafeAlign::Execute() {
 	pos = Robot::vision->GetCentralValue();
 	double dist = pos - 160;
-	if (dist > 5) {
-		Robot::drivetrain->Drive(1.25, -0.225, 1);
-	} else if (dist < -5) {
-		Robot::drivetrain->Drive(1.25, 0.225, 1);
-	} else if (dist < -155) {
+	if (dist > 8) {
+		Robot::drivetrain->Drive(90, -0.2, 1);
+	} else if (pos == 0) {
 		Robot::drivetrain->Brake();
 		End();
-	} else {
-		Robot::drivetrain->Brake();
-		End();
+	} else if (dist < -8) {
+		Robot::drivetrain->Drive(90, 0.2, 1);
 	}
 }
 
 // Make this return true when this  no longer needs to run execute()
 bool StrafeAlign::IsFinished() {
-	return pos <= 164 && pos >= 156;
+	return pos <= 165 && pos >= 155;
 }
 
 // Called once after isFinished returns true

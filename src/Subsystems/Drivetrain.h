@@ -11,7 +11,6 @@ private:
 	AnalogInput * rangeFinder;
 	double desiredHeading;
 public:
-	PIDController * rotationPid;
 	SwerveModule * fl;
 	SwerveModule * fr;
 	SwerveModule * bl;

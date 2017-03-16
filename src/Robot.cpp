@@ -3,7 +3,7 @@
 #include "OI.h"
 #include "Robot.h"
 #include "WPILib.h"
-#include "Commands/Autonomous/TestAuton.h"
+#include "Commands/Autonomous/EasyMiddle.h"
 #include "Commands/Autonomous/LeftStationAuton.h"
 #include "Commands/Autonomous/MiddleStationAuton.h"
 #include "Commands/Autonomous/RightStationAuton.h"
@@ -32,7 +32,7 @@ void Robot::RobotInit() {
 	this->autoPicker->AddDefault("Middle Station Auton", new MiddleStationAuton());
 	this->autoPicker->AddObject("Left Station Auton", new LeftStationAuton());
 	this->autoPicker->AddObject("Right Station Auton", new RightStationAuton());
-	this->autoPicker->AddObject("Test Auton", new TestAuton());
+	this->autoPicker->AddObject("Easy Middle Auton", new EasyMiddle());
 	SmartDashboard::PutData("Auto Picker", this->autoPicker);
 }
 
@@ -51,11 +51,13 @@ void Robot::AutonomousInit() {
 }
 
 void Robot::AutonomousPeriodic() {
-	SmartDashboard::PutNumber("FL Angle", Robot::drivetrain->fl->GetAngle());
-	SmartDashboard::PutNumber("FR Angle", Robot::drivetrain->fr->GetAngle());
-	SmartDashboard::PutNumber("BL Angle", Robot::drivetrain->bl->GetAngle());
-	SmartDashboard::PutNumber("BR Angle", Robot::drivetrain->br->GetAngle());
-	SmartDashboard::PutNumber("Distance Away", Robot::drivetrain->GetDistanceAway());
+	SmartDashboard::PutNumber("FL Angle", 		Robot::drivetrain->fl->GetAngle());
+	SmartDashboard::PutNumber("FR Angle", 		Robot::drivetrain->fr->GetAngle());
+	SmartDashboard::PutNumber("BL Angle", 		Robot::drivetrain->bl->GetAngle());
+	SmartDashboard::PutNumber("BR Angle", 		Robot::drivetrain->br->GetAngle());
+	SmartDashboard::PutNumber("Distance Away", 	Robot::drivetrain->GetDistanceAway());
+	SmartDashboard::PutNumber("Heading", 		Robot::gyro->GetHeading());
+	SmartDashboard::PutNumber("Center X", 		Robot::vision->GetCentralValue());
 	frc::Scheduler::GetInstance()->Run();
 }
 
@@ -86,7 +88,6 @@ void Robot::TeleopPeriodic() {
 	SmartDashboard::PutNumber("BR Angle", 		Robot::drivetrain->br->GetAngle());
 	SmartDashboard::PutNumber("Distance Away", 	Robot::drivetrain->GetDistanceAway());
 	SmartDashboard::PutNumber("Heading", 		Robot::gyro->GetHeading());
-	SmartDashboard::PutNumber("Angular Rate", 	Robot::gyro->GetAngularRate());
 	SmartDashboard::PutNumber("Center X", 		Robot::vision->GetCentralValue());
 
 	frc::Scheduler::GetInstance()->Run();

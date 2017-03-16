@@ -15,21 +15,21 @@ void RotateToAngle::Initialize() {
 // Called repeatedly when this  is scheduled to run
 void RotateToAngle::Execute() {
 	if ((Robot::gyro->GetHeading() - angle) > 0) {
-		Robot::drivetrain->RotateRobot(0.3);
+		Robot::drivetrain->RotateRobot(0.28);
+	} else if (fmod(fabs(Robot::gyro->GetHeading() - angle), 360) < 8) {
+		Robot::drivetrain->Brake();
 	} else {
-		Robot::drivetrain->RotateRobot(-0.3);
+		Robot::drivetrain->RotateRobot(-0.28);
 	}
-	SmartDashboard::PutString("Rotate Finished", "In Progress!");
 }
 
 // Make this return true when this  no longer needs to run execute()
 bool RotateToAngle::IsFinished() {
-	return fabs(Robot::gyro->GetHeading() - angle) < 7;
+	return fmod(fabs(Robot::gyro->GetHeading() - angle), 360) < 5;
 }
 
 // Called once after isFinished returns true
 void RotateToAngle::End() {
-	SmartDashboard::PutString("Rotate Finished", "Done!");
 	Robot::drivetrain->ReturnWheelsToZero();
 	Robot::drivetrain->Brake();
 }
@@ -37,5 +37,5 @@ void RotateToAngle::End() {
 // Called when another  which requires one or more of the same
 // subsystems is scheduled to run
 void RotateToAngle::Interrupted() {
-
+	End();
 }

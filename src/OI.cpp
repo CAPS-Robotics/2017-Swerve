@@ -6,6 +6,8 @@
 #include "Commands/Climber/Climb.h"
 #include "Commands/Autonomous/RotateToAngle.h"
 #include "Commands/Autonomous/StrafeAlign.h"
+#include "Commands/Autonomous/PlaceGear.h"
+#include "Commands/Autonomous/DriveUntilDistance.h"
 #include "Commands/Climber/StopClimbing.h"
 
 OI::OI() {
@@ -24,13 +26,12 @@ OI::OI() {
 	button12 = new JoystickButton(joy1, 12);
 
 	button2->WhileHeld(new ReturnWheels());
-	button3->WhileHeld(new Climb());
-	button4->WhileHeld(new StopClimbing());
+	button3->WhenPressed(new Climb());
+	button4->WhenPressed(new StopClimbing());
 	button6->WhenPressed(new ZeroGyro());
-	button7->WhenPressed(new RotateToAngle(-60));
-	button8->WhenPressed(new RotateToAngle(60));
-	button10->WhenPressed(new RotateToAngle(0));
-	button12->WhenPressed(new StrafeAlign());
+	button8->WhenPressed(new PlaceGear(-60));
+	button10->WhenPressed(new PlaceGear(0));
+	button12->WhenPressed(new PlaceGear(60));
 }
 
 float OI::GetX() {

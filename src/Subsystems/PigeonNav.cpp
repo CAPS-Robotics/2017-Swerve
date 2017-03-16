@@ -5,7 +5,7 @@
 
 PigeonNav::PigeonNav() : Subsystem("PigeonNav") {
 	Robot::climber.get();
-	this->gyro = new PigeonImu(Robot::climber->GetClimber2());
+	this->gyro = new PigeonImu(Robot::climber->GetClimber1());
 	this->ypr = new double[3];
 	this->ResetHeading();
 }
@@ -15,7 +15,8 @@ double PigeonNav::PIDGet() {
 }
 
 double PigeonNav::GetHeading() {
-	return fmod(this->gyro->GetFusedHeading(), 360);
+	double angle = fmod(fmod(this->gyro->GetFusedHeading(), 360) + 360, 360);
+	return angle <= 180 ? angle : -360 + angle;
 }
 
 double PigeonNav::GetAngularRate() {

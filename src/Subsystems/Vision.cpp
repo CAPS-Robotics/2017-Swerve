@@ -26,9 +26,9 @@ double Vision::GetCentralValue() {
 		double rightEdge = centerX[id] - width[id] / 2;
 		return (leftEdge + rightEdge) / 2.0;
 	} else if (centerX.size() == 1) {
-		return 320 - centerX[0];
+		return centerX[0];
 	} else {
-		return centerX.size();
+		return 0;
 	}
 }
 
