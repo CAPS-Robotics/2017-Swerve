@@ -32,5 +32,6 @@ const int RANGE_FINDER			= 4;
 
 const int PI = 3.1415926536;
 const int GR = 1.0 / 1.2;
+const int GEAR_DISTANCE = 9.3;
 
 #endif  // ROBOTMAP_H

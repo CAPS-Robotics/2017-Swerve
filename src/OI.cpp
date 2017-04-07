@@ -26,9 +26,9 @@ OI::OI() {
 	button12 = new JoystickButton(joy1, 12);
 
 	button2->WhileHeld(new ReturnWheels());
-	button3->WhenPressed(new Climb());
-	button4->WhenPressed(new StopClimbing());
-	button6->WhenPressed(new ZeroGyro());
+	button3->WhileHeld(new Climb());
+	button4->WhileHeld(new StopClimbing());
+	button6->WhileHeld(new ZeroGyro());
 	button8->WhenPressed(new PlaceGear(-60));
 	button10->WhenPressed(new PlaceGear(0));
 	button12->WhenPressed(new PlaceGear(60));

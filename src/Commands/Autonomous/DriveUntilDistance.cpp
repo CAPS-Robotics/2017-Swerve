@@ -16,7 +16,7 @@ void DriveUntilDistance::Initialize() {
 
 // Called repeatedly when this  is scheduled to run
 void DriveUntilDistance::Execute() {
-	Robot::drivetrain->Drive(0, 0.35, 1);
+	Robot::drivetrain->ArcadeDrive(0.35, 0, 1);
 	if (Robot::drivetrain->GetDistanceAway() < distance) {
 		End();
 	}

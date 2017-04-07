@@ -3,7 +3,8 @@
 #include <Commands/Autonomous/RotateToAngle.h>
 #include <Commands/Autonomous/StrafeAlign.h>
 #include <Commands/Autonomous/DriveStraightForTime.h>
+#include "../../RobotMap.h"
 
 EasyMiddle::EasyMiddle() {
-	AddSequential(new DriveUntilDistance(9.1));
+	AddSequential(new DriveUntilDistance(GEAR_DISTANCE));
 }

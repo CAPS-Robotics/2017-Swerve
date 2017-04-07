@@ -16,7 +16,7 @@ void Climb::Initialize() {
 
 // Called repeatedly when this Command is scheduled to run
 void Climb::Execute() {
-	Robot::climber->SetClimberSpeed(1);
+	Robot::climber->SetClimberSpeed(-1);
 }
 
 
