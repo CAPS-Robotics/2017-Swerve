@@ -7,6 +7,6 @@
 
 LeftStationAuton::LeftStationAuton() {
 	AddSequential(new ZeroGyro());
-	AddSequential(new DriveStraightForTime(2.05));
+	AddSequential(new DriveStraightForTime(2.25));
 	AddSequential(new PlaceGear(-60));
 }
