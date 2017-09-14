@@ -18,9 +18,7 @@ const int BL_DRIVE_TALON  		= 3;
 const int FL_TALON_SRX 			= 0;
 const int BL_TALON_SRX 			= 1;
 const int BR_TALON_SRX 			= 2;
-const int CLIMBER2_TALON_SRX	= 3;
 const int FR_TALON_SRX 			= 4;
-const int CLIMBER1_TALON_SRX 	= 5;
 
 // Analog
 const int FR_STEER_ENCODER		= 0;

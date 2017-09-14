@@ -1,7 +1,6 @@
 #include <Subsystems/PigeonNav.h>
 #include "WPILib.h"
 #include "Subsystems/Drivetrain.h"
-#include "Subsystems/Climber.h"
 #include "Subsystems/Vision.h"
 #include "OI.h"
 
@@ -19,7 +18,6 @@ public:
 	void TeleopPeriodic() override;
 	void TestPeriodic() override;
 	static std::shared_ptr<Drivetrain> drivetrain;
-	static std::shared_ptr<Climber> climber;
 	static std::shared_ptr<PigeonNav> gyro;
 	static std::shared_ptr<Vision> vision;
 	static std::shared_ptr<OI> oi;

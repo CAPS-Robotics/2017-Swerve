@@ -10,7 +10,6 @@
 #include <thread>
 
 std::shared_ptr<Drivetrain> Robot::drivetrain;
-std::shared_ptr<Climber> Robot::climber;
 std::shared_ptr<Vision> Robot::vision;
 std::shared_ptr<PigeonNav> Robot::gyro;
 std::shared_ptr<OI> Robot::oi;

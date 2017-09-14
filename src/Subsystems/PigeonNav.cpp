@@ -5,7 +5,7 @@
 
 PigeonNav::PigeonNav() : Subsystem("PigeonNav") {
 	Robot::climber.get();
-	this->gyro = new PigeonImu(Robot::climber->GetClimber2());
+	this->gyro = new PigeonImu(/* Pass in the SRX that the board is plugged into */);
 	this->ypr = new double[3];
 	this->ResetHeading();
 }

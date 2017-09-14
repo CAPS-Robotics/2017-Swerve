@@ -3,12 +3,10 @@
 #include <WPILib.h>
 #include "Commands/Drivetrain/ReturnWheels.h"
 #include "Commands/Drivetrain/ZeroGyro.h"
-#include "Commands/Climber/Climb.h"
 #include "Commands/Autonomous/RotateToAngle.h"
 #include "Commands/Autonomous/StrafeAlign.h"
 #include "Commands/Autonomous/PlaceGear.h"
 #include "Commands/Autonomous/DriveUntilDistance.h"
-#include "Commands/Climber/StopClimbing.h"
 
 OI::OI() {
 	joy1 = new Joystick(0);
@@ -26,8 +24,6 @@ OI::OI() {
 	button12 = new JoystickButton(joy1, 12);
 
 	button2->WhileHeld(new ReturnWheels());
-	button3->WhileHeld(new Climb());
-	button4->WhileHeld(new StopClimbing());
 	button6->WhileHeld(new ZeroGyro());
 	button8->WhenPressed(new PlaceGear(-60));
 	button10->WhenPressed(new PlaceGear(0));
